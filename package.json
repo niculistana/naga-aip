@@ -1,0 +1,36 @@
+{
+  "name": "naga-aip",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && mkdir dist/src && cp src/routes/* dist/src && cp -R data dist && cp assets/* dist/assets",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@neondatabase/neon-js": "0.2.0-beta.1",
+    "@neondatabase/postgrest-js": "0.1.0-alpha.2",
+    "@neondatabase/serverless": "^1.1.0",
+    "@react-router/fs-routes": "^7.14.2",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.5.0",
+    "http-server": "^14.1.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.58.2",
+    "vite": "^8.0.9"
+  }
+}
