@@ -1,26 +1,31 @@
 {
-  "name": "naga-aip",
-  "private": false,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build && mkdir dist/src && cp src/routes/* dist/src && cp -R data dist && cp assets/* dist/assets",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
   "dependencies": {
     "@neondatabase/neon-js": "0.2.0-beta.1",
     "@neondatabase/postgrest-js": "0.1.0-alpha.2",
     "@neondatabase/serverless": "^1.1.0",
-    "@react-router/fs-routes": "^7.14.2",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "react-router-dom": "^7.14.2"
+    "@react-router/express": "~7.14.0",
+    "@react-router/fs-routes": "~7.14.0",
+    "@react-router/node": "~7.14.0",
+    "@tailwindcss/vite": "^4.2.4",
+    "better-auth": "^1.6.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "isbot": "^5",
+    "pg": "^8.20.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router": "^7.14.2",
+    "react-router-dom": "~7.14.0",
+    "tailwindcss": "^4.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@react-router/dev": "~7.14.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^24.12.2",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
@@ -29,8 +34,25 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
     "http-server": "^14.1.1",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.58.2",
-    "vite": "^8.0.9"
-  }
+    "nodemon": "^3.1.10",
+    "tsx": "^4.21.0",
+    "typescript": "~5.2.2",
+    "typescript-eslint": "^8.48.0",
+    "vite": "^8.0.9",
+    "vite-express": "^0.22.1"
+  },
+  "name": "naga-aip",
+  "private": false,
+  "scripts": {
+    "build": "tsc -b && vite build && mkdir dist/src && cp src/routes/* dist/src && cp -R data dist && cp assets/* dist/assets",
+    "build:client:production": "react-router build --config vite.config.ts",
+    "build:server:production": "NODE_ENV=production tsc --project tsconfig.server.json",
+    "dev": "nodemon --env-file=.env -w src/server -x tsx src/server/index.ts",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "watch:client": "react-router dev --config vite.config.ts --open",
+    "watch:server": "tsx watch --tsconfig tsconfig.server.json ./src/server/index.ts"
+  },
+  "type": "module",
+  "version": "0.0.0"
 }
