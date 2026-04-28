@@ -1,0 +1,7 @@
+{
+  "env": {
+    "env-file": ".env"
+  },
+  "watch": ["src/server"],
+  "exec": "tsx src/server/index.ts"
+}

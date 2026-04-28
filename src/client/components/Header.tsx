@@ -1,5 +1,4 @@
 import React from "react";
-import { authClient } from "../lib/auth";
 import { useNavigate } from "react-router";
 
 export const Header: React.FC = () => {
@@ -10,14 +9,6 @@ export const Header: React.FC = () => {
       <div className="text-xl font-bold text-blue-700 tracking-tight">
         Naga AIP 2026 Dashboard
       </div>
-      <button
-        onClick={async () => {
-          await authClient.signOut();
-          navigate("/auth/signin");
-        }}
-      >
-        Sign out
-      </button>
     </header>
   );
 };

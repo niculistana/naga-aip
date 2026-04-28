@@ -7,7 +7,6 @@
     "@react-router/fs-routes": "~7.14.0",
     "@react-router/node": "~7.14.0",
     "@tailwindcss/vite": "^4.2.4",
-    "better-auth": "^1.6.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
@@ -46,9 +45,8 @@
   "private": false,
   "scripts": {
     "build": "tsc -b && vite build && mkdir dist/src && cp src/routes/* dist/src && cp -R data dist && cp assets/* dist/assets",
-    "build:client:production": "react-router build --config vite.config.ts",
     "build:server:production": "NODE_ENV=production tsc --project tsconfig.server.json",
-    "dev": "nodemon --env-file=.env -w src/server -x tsx src/server/index.ts",
+    "dev": "nodemon",
     "lint": "eslint .",
     "preview": "vite preview",
     "watch:client": "react-router dev --config vite.config.ts --open",
