@@ -45,7 +45,7 @@
   "private": false,
   "scripts": {
     "build": "tsc -b && vite build && mkdir dist/src && cp src/routes/* dist/src && cp -R data dist && cp assets/* dist/assets",
-    "build:server:production": "NODE_ENV=production tsc --project tsconfig.server.json",
+    "build:server:production": "tsc --project tsconfig.server.json",
     "dev": "nodemon",
     "lint": "eslint .",
     "preview": "vite preview",

@@ -1,27 +1,46 @@
 // Helper to extract user from better-auth session
 import dotenv from "dotenv";
 import path from "path";
-import fs from "fs";
-import { pathToFileURL } from "url";
-import type { ServerBuild } from "react-router";
 import ViteExpress from "vite-express";
 dotenv.config({
   path: path.resolve(import.meta.dirname, "../../.env"),
 });
 import express from "express";
-import type { Request, Response } from "express";
-import { createRequestHandler } from "@react-router/express";
 import cors from "cors"; // Import the CORS middleware
-import { sql } from "./db";
+import { neon } from "@neondatabase/serverless";
 
+const sql = neon(process.env.DATABASE_URL || "");
 const app = express();
 
 app.all("/api/auth/*", async (req, res, next) => {
   next();
 });
 
-// In-memory cache for table results
+const allowedFields = [
+  "id",
+  "abbreviation",
+  "name",
+  "description",
+  "theme",
+  "title",
+  "subtitle",
+  "total",
+  "offices",
+  "paps_count",
+  "year",
+  "agency_id",
+  "cluster_id",
+  "amount",
+  "category",
+  "program_id",
+  "aip_reference_code",
+  "implementation_start",
+  "implementation_end",
+  "created_at",
+  "updated_at",
+];
 const tableCache = new Map();
+
 app.get("/api/data/one/:table/id/:id", async (req, res, next) => {
   const table = req.params.table;
   const id = req.params.id;
@@ -33,7 +52,6 @@ app.get("/api/data/one/:table/id/:id", async (req, res, next) => {
       .json({ message: "Fields query params are are required" });
   }
 
-  const allowedFields = ["id"];
   const filterParams = (str: string) => allowedFields.includes(str);
   const safeFields = fields.toString().split(",").filter(filterParams);
   const safeFieldsStr = safeFields.join(", ");
@@ -53,7 +71,6 @@ app.get("/api/data/all/:table", async (req, res, next) => {
       .json({ message: "Fields query params are are required" });
   }
 
-  const allowedFields = ["id"];
   const filterParams = (str: string) => allowedFields.includes(str);
   const safeFields = fields.toString().split(",").filter(filterParams);
   const safeFieldsStr = safeFields.join(", ");
