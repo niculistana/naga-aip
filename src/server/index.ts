@@ -39,7 +39,6 @@ const allowedFields = [
   "created_at",
   "updated_at",
 ];
-const tableCache = new Map();
 
 app.get("/api/data/one/:table/id/:id", async (req, res, next) => {
   const table = req.params.table;
@@ -56,7 +55,22 @@ app.get("/api/data/one/:table/id/:id", async (req, res, next) => {
   const safeFields = fields.toString().split(",").filter(filterParams);
   const safeFieldsStr = safeFields.join(", ");
 
-  const result = sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)} where id=${sql.unsafe(id)}`;
+  if (!safeFields?.length) {
+    return res.status(400).json({ message: "Bad request" });
+  }
+
+  let result = {};
+
+  try {
+    result = sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)} where id=${sql.unsafe(id)}`;
+  } catch (e) {
+    return res.status(500).json({
+      message: "Internal server error",
+      params: req.params,
+      query: req.query,
+    });
+  }
+
   return res.status(200).json({ result });
 });
 
@@ -75,14 +89,23 @@ app.get("/api/data/all/:table", async (req, res, next) => {
   const safeFields = fields.toString().split(",").filter(filterParams);
   const safeFieldsStr = safeFields.join(", ");
 
-  // Use a cache key that includes both table and fields for specificity
-  const cacheKey = `${table}:${safeFieldsStr}`;
-
-  if (tableCache.has(cacheKey)) {
-    return res.status(200).json({ result: tableCache.get(cacheKey) });
+  if (!safeFields?.length) {
+    return res.status(400).json({ message: "Bad request" });
   }
 
-  const result = await sql`SELECT * from ${sql.unsafe(table)};`;
+  let result = {};
+  try {
+    result =
+      await sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)};`;
+  } catch (e) {
+    return res
+      .status(500)
+      .json({
+        message: "Internal server error",
+        params: req.params,
+        query: req.query,
+      });
+  }
 
   return res.status(200).json({ result });
 });
