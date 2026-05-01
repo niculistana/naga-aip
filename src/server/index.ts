@@ -12,27 +12,35 @@ import cors from "cors"; // Import the CORS middleware
 import { getAllByTable } from "./routes/data/get-all-by-table";
 import { getOneByTableAndId } from "./routes/data/get-one-by-table-and-id";
 import { sql } from "./db";
+import { getAppBundle } from "./routes/app/get-app-bundle";
+import { getStaticAssets } from "./middleware/assets";
+
+const PROD_CLIENT_HOST = process.env.CLIENT_HOST;
+const allowedHost =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : PROD_CLIENT_HOST;
 
 const app = express();
 const cache = new NodeCache({
   stdTTL: 100,
 });
 
-app.use(morgan("tiny"));
+app.use("/assets", getStaticAssets);
 
-app.all("/api/auth/*", async (req, res, next) => {
-  next();
-});
+app.use(morgan("tiny"));
 
 app.get("/api/data/one/:table/id/:id", getOneByTableAndId(sql, cache));
 
 app.get("/api/data/all/:table", getAllByTable(sql, cache));
 
+app.use(getAppBundle);
+
 // Configure CORS middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
+    origin: allowedHost,
+    methods: ["GET"], // Specify allowed HTTP methods
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   }),
 );

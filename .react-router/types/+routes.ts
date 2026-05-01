@@ -14,15 +14,6 @@ type Pages = {
   "/": {
     params: {};
   };
-  "/auth/signin": {
-    params: {};
-  };
-  "/auth/signup": {
-    params: {};
-  };
-  "/config": {
-    params: {};
-  };
   "/home": {
     params: {};
   };
@@ -31,23 +22,11 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/auth/signin" | "/auth/signup" | "/config" | "/home";
-  };
-  "routes/auth.signin.tsx": {
-    id: "routes/auth.signin";
-    page: "/auth/signin";
-  };
-  "routes/auth.signup.tsx": {
-    id: "routes/auth.signup";
-    page: "/auth/signup";
+    page: "/" | "/home";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
     page: "/";
-  };
-  "routes/config.tsx": {
-    id: "routes/config";
-    page: "/config";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -57,9 +36,6 @@ type RouteFiles = {
 
 type RouteModules = {
   "root": typeof import("./src/client/root.tsx");
-  "routes/auth.signin": typeof import("./src/client/routes/auth.signin.tsx");
-  "routes/auth.signup": typeof import("./src/client/routes/auth.signup.tsx");
   "routes/_index": typeof import("./src/client/routes/_index.tsx");
-  "routes/config": typeof import("./src/client/routes/config.tsx");
   "routes/home": typeof import("./src/client/routes/home.tsx");
 };

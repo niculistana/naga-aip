@@ -1,8 +1,10 @@
+import type { Request, Response, NextFunction } from "express";
 import type NodeCache from "node-cache";
-import { allowedFields } from "../util";
+import { allowedFields } from "../../util";
 
 export const getAllByTable =
-  (sql, cache: NodeCache) => async (req, res, next) => {
+  (sql, cache: NodeCache) =>
+  async (req: Request, res: Response, next: NextFunction) => {
     const table = req.params.table;
     const fields = req.query.fields;
 
@@ -33,7 +35,6 @@ export const getAllByTable =
         await sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)}`;
       cache.set(cacheKey, result);
     } catch (e) {
-      console.log(e);
       return res.status(500).json({
         message: "Internal server error",
         params: req.params,

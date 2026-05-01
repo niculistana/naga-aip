@@ -7,6 +7,8 @@ import {
   isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
 import "./index.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -29,8 +31,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="w-full">
-      <Outlet />
+    <div className="h-screen w-screen flex flex-col">
+      <Header />
+      <div className="flex flex-1 p-12 max-h-screen overflow-y-scroll">
+        <Outlet />
+      </div>
+      <Footer />
     </div>
   );
 }

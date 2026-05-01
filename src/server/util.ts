@@ -1,3 +1,4 @@
+import path from "path";
 export const allowedFields = [
   "id",
   "abbreviation",
@@ -21,3 +22,9 @@ export const allowedFields = [
   "created_at",
   "updated_at",
 ];
+
+export const buildPath = path.join(import.meta.dirname, "../../build");
+export const ssrServerFile = "/ssr/server/index.js";
+export const assetsFolder = "/ssr/client/assets";
+export const assetsPath = path.join(buildPath, assetsFolder);
+export const serverPath = path.join(buildPath, ssrServerFile);
