@@ -1,13 +1,6 @@
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
-import { HomePage } from "../pages/HomePage";
-
-const getAll = ({ table, fields }: { table: string; fields: string[] }) => {
-  const API_HOST = import.meta.env.VITE_API_HOST;
-
-  const endpoint = `${API_HOST}/api/data/all/${table}?fields=${fields}`;
-
-  return fetch(endpoint).then((data) => data.json());
-};
+import { HomePage } from "@/pages/HomePage";
+import { getAllByTable } from "@/api/getAllByTable";
 
 export const clustersFields = [
   "description",
@@ -39,10 +32,22 @@ export const programsFields = [
 export const amountsFields = ["amount", "program_id", "category"];
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const clustersPromise = getAll({ table: "clusters", fields: clustersFields });
-  const agenciesPromise = getAll({ table: "agencies", fields: agenciesFields });
-  const programsPromise = getAll({ table: "programs", fields: programsFields });
-  const amountsPromise = getAll({ table: "amounts", fields: amountsFields });
+  const clustersPromise = getAllByTable({
+    table: "clusters",
+    fields: clustersFields,
+  });
+  const agenciesPromise = getAllByTable({
+    table: "agencies",
+    fields: agenciesFields,
+  });
+  const programsPromise = getAllByTable({
+    table: "programs",
+    fields: programsFields,
+  });
+  const amountsPromise = getAllByTable({
+    table: "amounts",
+    fields: amountsFields,
+  });
 
   const allPromises = [
     clustersPromise,

@@ -2,7 +2,7 @@ import fs from "fs";
 import { pathToFileURL } from "url";
 import type { ServerBuild } from "react-router";
 import { createRequestHandler } from "@react-router/express";
-import { serverPath } from "../../util";
+import { serverPath } from "../../util.js";
 
 if (!fs.existsSync(serverPath)) {
   throw new Error(

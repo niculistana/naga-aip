@@ -1,4 +1,4 @@
-import { buildPath, assetsFolder } from "../../util";
+import { buildPath, assetsFolder } from "../../util.js";
 import fs from "fs";
 import path from "path";
 import express from "express";
@@ -10,4 +10,5 @@ if (!fs.existsSync(assetsPath)) {
   );
 }
 
-export const getStaticAssets = express.static(assetsPath);
+export const getStaticAssets: ReturnType<typeof express.static> =
+  express.static(assetsPath);

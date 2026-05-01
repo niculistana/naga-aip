@@ -22,7 +22,8 @@
     "react-router-dom": "~7.14.0",
     "recharts": "^3.8.1",
     "tailwindcss": "^4.2.4",
-    "vite-express": "^0.22.1"
+    "vite-express": "^0.22.1",
+    "vite-tsconfig-paths": "^6.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -55,7 +56,8 @@
     "build": "tsc -b && vite build && mkdir dist/src && cp src/routes/* dist/src && cp -R data dist && cp assets/* dist/assets",
     "build:client:production": "react-router build --config vite.config.ts",
     "build:server:production": "tsc --project tsconfig.server.json",
-    "dev": "nodemon",
+    "dev": "cat .env.development.example > .env && vite",
+    "dev:local": "read -p 'Enter DATABASE_URL: ' dburl && cat .env.local.example | sed \"s|replace_me|$dburl|g\" > .env && nodemon",
     "lint": "eslint .",
     "preview": "vite preview",
     "watch:client": "react-router dev --config vite.config.ts --open",

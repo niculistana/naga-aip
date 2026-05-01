@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from "vitest";
-import { getAllByTable } from "./get-all-by-table";
+import { getAllByTable } from "./get-all-by-table.js";
 import type { Request, Response, NextFunction } from "express";
 import NodeCache from "node-cache";
 

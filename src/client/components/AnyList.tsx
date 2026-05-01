@@ -10,13 +10,13 @@ export const AnyListItem = ({ item }: { item: object }) => {
   const entries = Object.entries(item);
   return (
     <>
-      {entries.map((entry) => {
+      {entries.map((entry, id) => {
         const [key, value] = entry;
         if (["implementation_start", "implementation_end"].includes(key)) {
           const formattedValue = dayjs.utc(value).format("DD/MM/YY");
-          return <AnyValue value={formattedValue} />;
+          return <AnyValue key={`${key}-${id}`} value={formattedValue} />;
         }
-        return <AnyValue value={value} />;
+        return <AnyValue key={`${key}-${id}`} value={value} />;
       })}
     </>
   );
@@ -39,16 +39,22 @@ export const AnyList = ({
         className="grid grid-flow-col gap-x-2"
         style={{ gridTemplateColumns: `repeat(${colNum}, 256px)` }}
       >
-        {headers.map((header) => {
+        {headers.map((header, index) => {
           return (
-            <span className="text-md font-semibold truncate">{header}</span>
+            <span
+              key={`${header}-${index}`}
+              className="text-md font-semibold truncate"
+            >
+              {header}
+            </span>
           );
         })}
       </div>
       <div className="grid grid-flow-row gap-x-2">
         {list.length ? (
-          list.map((item) => (
+          list.map((item, index) => (
             <div
+              key={`any-list-item-${index}`}
               className="grid grid-flow-col gap-x-2"
               style={{ gridTemplateColumns: `repeat(${colNum}, 256px)` }}
             >

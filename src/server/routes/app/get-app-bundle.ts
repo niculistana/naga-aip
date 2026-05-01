@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 
-import { ssrHandlerPromise } from "../../middleware/ssr";
+import { ssrHandlerPromise } from "../../middleware/ssr/index.js";
 
 export const getAppBundle = async (
   req: Request,

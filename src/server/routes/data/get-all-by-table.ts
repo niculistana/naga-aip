@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import type NodeCache from "node-cache";
-import { allowedFields } from "../../util";
+import { allowedFields } from "../../util.js";
 
 export const getAllByTable =
-  (sql, cache: NodeCache) =>
+  (sql: any, cache: NodeCache) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const table = req.params.table;
     const fields = req.query.fields;

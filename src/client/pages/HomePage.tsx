@@ -1,11 +1,12 @@
-import { AnyList } from "../components/AnyList";
+import { AnyList } from "@/components/AnyList";
 import { useState } from "react";
 import {
   amountsFields,
   clustersFields,
   agenciesFields,
   programsFields,
-} from "../routes/home";
+} from "@/routes/home";
+
 export function HomePage({
   initialData,
 }: {

@@ -7,8 +7,8 @@ import {
   isRouteErrorResponse,
 } from "react-router";
 import type { Route } from "./+types/root";
-import { Header } from "./components/Header";
-import { Footer } from "./components/Footer";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import "./index.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {

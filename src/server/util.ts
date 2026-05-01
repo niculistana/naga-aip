@@ -23,7 +23,11 @@ export const allowedFields = [
   "updated_at",
 ];
 
-export const buildPath = path.join(import.meta.dirname, "../../build");
+export const SERVER_BASE_PATH_FROM_ROOT = "../../";
+export const buildPath = path.join(
+  import.meta.dirname,
+  `${SERVER_BASE_PATH_FROM_ROOT}/build`,
+);
 export const ssrServerFile = "/ssr/server/index.js";
 export const assetsFolder = "/ssr/client/assets";
 export const assetsPath = path.join(buildPath, assetsFolder);

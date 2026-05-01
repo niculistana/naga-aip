@@ -1,15 +1,10 @@
-import path from "path";
-import dotenv from "dotenv";
 import type { Request, Response, NextFunction } from "express";
-dotenv.config({
-  path: path.resolve(import.meta.dirname, "../../../../.env"),
-});
 
-import { allowedFields } from "../../util";
+import { allowedFields } from "../../util.js";
 import type NodeCache from "node-cache";
 
 export const getOneByTableAndId =
-  (sql, cache: NodeCache) =>
+  (sql: any, cache: NodeCache) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const table = req.params.table;
     const id = req.params.id;
