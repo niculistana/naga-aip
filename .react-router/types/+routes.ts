@@ -14,6 +14,9 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/api-docs": {
+    params: {};
+  };
   "/home": {
     params: {};
   };
@@ -22,7 +25,11 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/home";
+    page: "/" | "/api-docs" | "/home";
+  };
+  "routes/api-docs.tsx": {
+    id: "routes/api-docs";
+    page: "/api-docs";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
@@ -36,6 +43,7 @@ type RouteFiles = {
 
 type RouteModules = {
   "root": typeof import("./src/client/root.tsx");
+  "routes/api-docs": typeof import("./src/client/routes/api-docs.tsx");
   "routes/_index": typeof import("./src/client/routes/_index.tsx");
   "routes/home": typeof import("./src/client/routes/home.tsx");
 };

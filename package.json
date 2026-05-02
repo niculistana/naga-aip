@@ -21,9 +21,9 @@
     "react-router": "^7.14.2",
     "react-router-dom": "~7.14.0",
     "recharts": "^3.8.1",
+    "swagger-ui-react": "^5.32.5",
     "tailwindcss": "^4.2.4",
-    "vite-express": "^0.22.1",
-    "vite-tsconfig-paths": "^6.1.1"
+    "vite-express": "^0.22.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -35,6 +35,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/swagger-ui-react": "^5.18.0",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/ui": "^4.1.5",
     "eslint": "^9.39.4",
@@ -60,9 +61,10 @@
     "dev:local": "read -p 'Enter DATABASE_URL: ' dburl && cat .env.local.example | sed \"s|replace_me|$dburl|g\" > .env && nodemon",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest run --config vitest.config.ts --watch",
     "watch:client": "react-router dev --config vite.config.ts --open",
-    "watch:server": "tsx watch --tsconfig tsconfig.server.json ./src/server/index.ts",
-    "test": "vitest run --config vitest.config.ts"
+    "watch:server": "tsx watch --tsconfig tsconfig.server.json ./src/server/index.ts"
   },
   "type": "module",
   "version": "0.0.0"

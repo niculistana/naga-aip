@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 
+import { allowedTables } from "../../util.js";
 import { allowedFields } from "../../util.js";
 import type NodeCache from "node-cache";
 
@@ -9,6 +10,12 @@ export const getOneByTableAndId =
     const table = req.params.table;
     const id = req.params.id;
     const fields = req.query.fields;
+
+    if (!table?.length || !allowedTables.includes(table.toString())) {
+      return res.status(400).json({
+        message: "Invalid table, please see GET /api/tables for valid tables",
+      });
+    }
 
     if (!fields?.length) {
       return res
@@ -20,6 +27,11 @@ export const getOneByTableAndId =
     const safeFields = fields.toString().split(",").filter(filterParams);
     const safeFieldsStr = safeFields.join(", ");
 
+    let message = `This API may be missing data which we are actively looking to add to, please file a request on Github to prioritize it.`;
+    if (safeFields.length !== fields.toString().split(",").length) {
+      message += `. Some fields were filtered out, please see GET /api/fields/${table} for valid fields for ${table}`;
+    }
+
     if (!safeFields?.length) {
       return res.status(400).json({ message: "Bad request" });
     }
@@ -27,7 +39,7 @@ export const getOneByTableAndId =
     const cacheKey = `one-${table}-${id}-${safeFieldsStr}`;
     if (cache.has(cacheKey)) {
       const cachedResult = cache.get(cacheKey);
-      return res.status(200).json({ result: cachedResult });
+      return res.status(200).json({ result: cachedResult, message });
     }
 
     let result = {};
@@ -44,5 +56,5 @@ export const getOneByTableAndId =
       });
     }
 
-    return res.status(200).json({ result });
+    return res.status(200).json({ result, message });
   };

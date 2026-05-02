@@ -6,7 +6,7 @@ import NodeCache from "node-cache";
 const cache = new NodeCache();
 
 // Helper to create mock req/res/next
-const createMockReqRes = (fields = "id", table = "users") => {
+const createMockReqRes = (fields = "name", table = "clusters") => {
   const req = {
     params: { table },
     query: { fields },
@@ -42,24 +42,28 @@ describe("getAllByTable", () => {
 
   it("returns cached result if present", async () => {
     const { req, res, next } = createMockReqRes();
-    const cacheKey = `all-users-id`;
-    cache.set(cacheKey, [{ id: 1, name: "Test" }]);
+    const cacheKey = `all-clusters-name`;
+    cache.set(cacheKey, [{ name: "Test" }]);
     await getAllByTable(vi.fn(), cache)(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      result: [{ id: 1, name: "Test" }],
+      result: [{ name: "Test" }],
+      message: expect.any(String),
     });
   });
 
   it("queries DB and caches result if not cached", async () => {
     const { req, res, next } = createMockReqRes();
-    const fakeResult = [{ id: 2, name: "User2" }];
+    const fakeResult = [{ name: "Cluster2" }];
     const mockSql: any = vi.fn().mockResolvedValueOnce(fakeResult);
     mockSql.unsafe = vi.fn((str) => str);
     await getAllByTable(mockSql, cache)(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ result: fakeResult });
-    const cacheKey = `all-users-id`;
+    expect(res.json).toHaveBeenCalledWith({
+      result: fakeResult,
+      message: expect.any(String),
+    });
+    const cacheKey = `all-clusters-name`;
     expect(cache.get(cacheKey)).toEqual(fakeResult);
   });
 

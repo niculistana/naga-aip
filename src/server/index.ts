@@ -9,18 +9,22 @@ dotenv.config({
 });
 import express from "express";
 import NodeCache from "node-cache";
+import { getAllTables } from "./routes/tables/get-all-tables.js";
 import { getAllByTable } from "./routes/data/get-all-by-table.js";
 import { getOneByTableAndId } from "./routes/data/get-one-by-table-and-id.js";
 import { sql } from "./db/index.js";
 import { getAppBundle } from "./routes/app/get-app-bundle.js";
 import { getStaticAssets } from "./middleware/assets/index.js";
+import { getAllFields } from "./routes/fields/get-all-fields.js";
 
 const app = express();
 const cache = new NodeCache({
   stdTTL: 100,
 });
 
-app.use("/assets", getStaticAssets);
+app.use("/assets", getStaticAssets("/assets"));
+app.use("/openapi.json", getStaticAssets("/openapi.json"));
+app.use("/naga-seal.png", getStaticAssets("/naga-seal.png"));
 
 app.use(morgan("tiny"));
 
@@ -28,6 +32,11 @@ app.get("/api/data/one/:table/id/:id", getOneByTableAndId(sql, cache));
 
 app.get("/api/data/all/:table", getAllByTable(sql, cache));
 
+app.get("/api/tables", getAllTables);
+
+app.get("/api/fields", getAllFields);
+
+// NOTE: this must be the last handler for all requests as this falls back to the client routes
 app.use(getAppBundle);
 
 // Mount express json middleware after Better Auth handler

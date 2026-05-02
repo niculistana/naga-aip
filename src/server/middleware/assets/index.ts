@@ -1,14 +1,15 @@
-import { buildPath, assetsFolder } from "../../util.js";
+import { clientPath } from "../../util.js";
 import fs from "fs";
-import path from "path";
 import express from "express";
+import path from "path";
+import type { RequestHandler } from "express";
 
-const assetsPath = path.join(buildPath, assetsFolder);
-if (!fs.existsSync(assetsPath)) {
+if (!fs.existsSync(clientPath)) {
   throw new Error(
-    `Assets not found under ${assetsPath}. Please run the build command before starting the server.`,
+    `Client files not found under ${clientPath}. Please run the build command before starting the server.`,
   );
 }
 
-export const getStaticAssets: ReturnType<typeof express.static> =
-  express.static(assetsPath);
+export const getStaticAssets = (fileOrFolder: string): RequestHandler => {
+  return express.static(path.join(clientPath, fileOrFolder));
+};
