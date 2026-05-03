@@ -5,13 +5,10 @@ export interface ClusterData {
   id: string | number;
   name: string;
   description?: string | null;
-  paps_count?: number | null; // pre-aggregated from DB (currently null)
-  program_count?: number | null; // derived client-side via agency join — preferred over paps_count
+  paps_count?: number | null; // placeholder: pre-aggregated program count; replace with real join count later
 }
 
 export function ClusterCard({ cluster }: { cluster: ClusterData }) {
-  const displayCount = cluster.program_count ?? cluster.paps_count;
-
   return (
     <Link to={`/cluster/${cluster.id}/allocation`} className="block">
       <Card hoverable>
@@ -27,7 +24,9 @@ export function ClusterCard({ cluster }: { cluster: ClusterData }) {
             </p>
           )}
           <span className="inline-block bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
-            {displayCount != null ? `${displayCount} Programs` : "Programs: —"}
+            {cluster.paps_count != null
+              ? `${cluster.paps_count} Programs`
+              : "Programs: —"}
           </span>
         </CardContent>
       </Card>
