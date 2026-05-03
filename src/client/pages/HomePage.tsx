@@ -11,21 +11,7 @@ export function HomePage({
     programs: any[];
   };
 }) {
-  const agencies: any[] = initialData?.agencies || [];
-  const programs: any[] = initialData?.programs || [];
-
-  // Build agency_id → cluster_id lookup (all IDs are strings from the API)
-  const agencyToCluster = new Map<string, string>(
-    agencies.map((a: any) => [String(a.id), String(a.cluster_id)])
-  );
-
-  // Merge computed count into each cluster
-  const clusters: ClusterData[] = (initialData?.clusters || []).map((c: any) => ({
-    ...c,
-    program_count: programs.filter(
-      (p: any) => agencyToCluster.get(String(p.agency_id)) === String(c.id)
-    ).length,
-  }));
+  const clusters: ClusterData[] = initialData?.clusters || [];
 
   return (
     <div className="h-full w-full">
