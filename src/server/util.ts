@@ -4,6 +4,7 @@ export const getAllowedFieldsForTable = (table: string) => {
   switch (table) {
     case "clusters":
       return [
+        "id",
         "description",
         "name",
         "offices",
@@ -15,9 +16,17 @@ export const getAllowedFieldsForTable = (table: string) => {
         "year",
       ];
     case "agencies":
-      return ["abbreviation", "cluster_id", "description", "title", "year"];
+      return [
+        "id",
+        "abbreviation",
+        "cluster_id",
+        "description",
+        "title",
+        "year",
+      ];
     case "programs":
       return [
+        "id",
         "agency_id",
         "aip_reference_code",
         "description",
@@ -26,7 +35,7 @@ export const getAllowedFieldsForTable = (table: string) => {
         "name",
       ];
     case "amounts":
-      return ["amount", "category", "program_id"];
+      return ["id", "amount", "category", "program_id"];
     default:
       return [];
   }
