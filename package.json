@@ -12,7 +12,6 @@
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
     "isbot": "^5",
-    "lucide-react": "^1.9.0",
     "morgan": "^1.10.1",
     "node-cache": "^5.1.2",
     "pg": "^8.20.0",
