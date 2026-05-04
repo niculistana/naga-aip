@@ -11,27 +11,21 @@ export function HomePage({
     programs: any[];
   };
 }) {
+  const agencies: any[] = initialData?.agencies || [];
+  const programs: any[] = initialData?.programs || [];
+
   // Build agency_id → cluster_id lookup (all IDs are strings from the API)
   const agencyToCluster = new Map<string, string>(
-    (initialData?.agencies || []).map((a: any) => [String(a.id), String(a.cluster_id)])
-  );
-
-  // Count programs per cluster via the agency join
-  const programCountByCluster = (initialData?.programs || []).reduce(
-    (acc: Record<string, number>, program: any) => {
-      const clusterId = agencyToCluster.get(String(program.agency_id));
-      if (clusterId != null) {
-        acc[clusterId] = (acc[clusterId] || 0) + 1;
-      }
-      return acc;
-    },
-    {} as Record<string, number>
+    agencies.map((a: any) => [String(a.id), String(a.cluster_id)])
   );
 
   // Merge computed count into each cluster
+  // TODO: replace filter with step 1 (cluster.program_ids) + step 2 (agency.program_id) once schema is confirmed
   const clusters: ClusterData[] = (initialData?.clusters || []).map((c: any) => ({
     ...c,
-    program_count: programCountByCluster[String(c.id)] ?? null,
+    program_count: programs.filter(
+      (p: any) => agencyToCluster.get(String(p.agency_id)) === String(c.id)
+    ).length,
   }));
 
   return (
