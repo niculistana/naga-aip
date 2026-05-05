@@ -59,6 +59,7 @@
     "build:server:production": "tsc --project tsconfig.server.json",
     "dev": "cat .env.development.example > .env && vite",
     "dev:local": "read -p 'Enter DATABASE_URL: ' dburl && cat .env.local.example | sed \"s|replace_me|$dburl|g\" > .env && nodemon",
+    "hooks:install": "git config core.hooksPath .githooks && chmod +x .githooks/*",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run --config vitest.config.ts",
