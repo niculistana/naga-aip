@@ -69,11 +69,8 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
         <h1 className="text-2xl font-bold text-gray-800">
           {toTitleCase(cluster.name)}
         </h1>
-        <Link
-          to="/home"
-          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mb-2"
-        >
-          ← Back to Clusters
+        <Link to="/home" className="...">
+          ← Back to Home
         </Link>
         <p className="text-sm text-gray-500 mt-1">
           {programs.length} program{programs.length !== 1 ? "s" : ""} ·{" "}
