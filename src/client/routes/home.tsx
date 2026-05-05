@@ -21,6 +21,7 @@ export const agenciesFields = [
 ];
 
 export const programsFields = [
+  "id",
   "agency_id",
   "aip_reference_code",
   "name",
