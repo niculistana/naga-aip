@@ -17,6 +17,7 @@ import { getAppBundle } from "./routes/app/get-app-bundle.js";
 import { getStaticAssets } from "./middleware/assets/index.js";
 import { getAllFields } from "./routes/fields/get-all-fields.js";
 import { getAllFieldsByTable } from "./routes/fields/get-all-fields-by-table.js";
+import { getOneByTableAndName } from "./routes/data/get-one-by-table-and-name.js";
 
 const app = express();
 const cache = new NodeCache({
@@ -30,6 +31,11 @@ app.use("/naga-seal.png", getStaticAssets("/naga-seal.png"));
 app.use(morgan("tiny"));
 
 app.get("/api/data/one/:table/id/:id", getOneByTableAndId(dbClient, cache));
+
+app.get(
+  "/api/data/one/:table/name/:name",
+  getOneByTableAndName(dbClient, cache),
+);
 
 app.get("/api/data/all/:table", getAllByTable(dbClient, cache));
 
