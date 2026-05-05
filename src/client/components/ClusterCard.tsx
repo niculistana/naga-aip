@@ -5,14 +5,8 @@ export interface ClusterData {
   id: string | number;
   name: string;
   description?: string | null;
-  paps_count?: number | null;     // pre-aggregated from DB (currently null)
-  program_count?: number | null;  // derived client-side via agency join — preferred over paps_count
-}
-
-function toTitleCase(str: string): string {
-  return str
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  paps_count?: number | null; // pre-aggregated from DB (currently null)
+  program_count?: number | null; // derived client-side via agency join — preferred over paps_count
 }
 
 export function ClusterCard({ cluster }: { cluster: ClusterData }) {
@@ -22,7 +16,7 @@ export function ClusterCard({ cluster }: { cluster: ClusterData }) {
     <Link to={`/cluster/${cluster.id}/allocation`} className="block">
       <Card hoverable>
         <CardHeader>
-          <h2 className="text-lg font-semibold">{toTitleCase(cluster.name)}</h2>
+          <h2 className="text-lg font-semibold">{cluster.name}</h2>
         </CardHeader>
         <CardContent>
           {cluster.description ? (
