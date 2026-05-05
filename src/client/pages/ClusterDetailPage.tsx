@@ -19,10 +19,15 @@ interface Program {
   implementation_end: string | null;
 }
 
-function getStatus(start: string | null, end: string | null): "Active" | "Inactive" {
+function getStatus(
+  start: string | null,
+  end: string | null,
+): "Active" | "Inactive" {
   if (!start || !end) return "Inactive";
   const today = new Date();
-  return today >= new Date(start) && today <= new Date(end) ? "Active" : "Inactive";
+  return today >= new Date(start) && today <= new Date(end)
+    ? "Active"
+    : "Inactive";
 }
 
 interface ClusterDetailData {
@@ -58,7 +63,10 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
       ? programs
       : programs.filter((p) => selectedAgencyIds.has(String(p.agency_id)));
 
-  const totalPages = Math.max(1, Math.ceil(filteredPrograms.length / PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredPrograms.length / PAGE_SIZE),
+  );
   const currentPageClamped = Math.min(currentPage, totalPages);
   const startIndex = (currentPageClamped - 1) * PAGE_SIZE;
   const visibleStart = filteredPrograms.length === 0 ? 0 : startIndex + 1;
@@ -149,7 +157,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
                 type="button"
                 onClick={() => {
                   setCurrentPage((page) => Math.max(1, page - 1));
-                  topRef.current?.scrollIntoView({ behavior: 'smooth' });
+                  topRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
                 disabled={currentPageClamped === 1}
                 className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:border disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
@@ -158,14 +166,15 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
               </button>
 
               <p className="text-sm text-gray-500">
-                Showing {visibleStart}-{visibleEnd} of {filteredPrograms.length} · Page {currentPageClamped} of {totalPages}
+                Showing {visibleStart}-{visibleEnd} of {filteredPrograms.length}{" "}
+                · Page {currentPageClamped} of {totalPages}
               </p>
 
               <button
                 type="button"
                 onClick={() => {
                   setCurrentPage((page) => Math.min(totalPages, page + 1));
-                  topRef.current?.scrollIntoView({ behavior: 'smooth' });
+                  topRef.current?.scrollIntoView({ behavior: "smooth" });
                 }}
                 disabled={currentPageClamped === totalPages}
                 className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:border disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
