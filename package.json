@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@bettergov/kapwa": "^1.2.4",
     "@neondatabase/neon-js": "0.2.0-beta.1",
     "@neondatabase/postgrest-js": "0.1.0-alpha.2",
     "@neondatabase/serverless": "^1.1.0",
@@ -12,7 +13,6 @@
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
     "isbot": "^5",
-    "lucide-react": "^1.9.0",
     "morgan": "^1.10.1",
     "node-cache": "^5.1.2",
     "pg": "^8.20.0",
