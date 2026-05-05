@@ -21,10 +21,6 @@ interface ClusterDetailData {
   programs: Program[];
 }
 
-function toTitleCase(str: string): string {
-  return str.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   const { cluster, agencies, programs } = data;
 
@@ -66,9 +62,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          {toTitleCase(cluster.name)}
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-800">{cluster.name}</h1>
         <Link
           to="/home"
           className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mb-2"
@@ -117,7 +111,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
       ) : (
         <List
           title="Programs"
-          headerTitle={toTitleCase(cluster.name)}
+          headerTitle={cluster.name}
           headerSubtitle={`${filteredPrograms.length} of ${programs.length} programs`}
           listItems={listItems}
         />
