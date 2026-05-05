@@ -16,6 +16,8 @@ import { sql } from "./db/index.js";
 import { getAppBundle } from "./routes/app/get-app-bundle.js";
 import { getStaticAssets } from "./middleware/assets/index.js";
 import { getAllFields } from "./routes/fields/get-all-fields.js";
+import { getAllFieldsByTable } from "./routes/fields/get-all-fields-by-table.js";
+import { getOneByTableAndName } from "./routes/data/get-one-by-table-and-name.js";
 
 const app = express();
 const cache = new NodeCache({
@@ -30,11 +32,15 @@ app.use(morgan("tiny"));
 
 app.get("/api/data/one/:table/id/:id", getOneByTableAndId(sql, cache));
 
+app.get("/api/data/one/:table/name/:name", getOneByTableAndName(sql, cache));
+
 app.get("/api/data/all/:table", getAllByTable(sql, cache));
 
 app.get("/api/tables", getAllTables);
 
 app.get("/api/fields", getAllFields);
+
+app.get("/api/fields/:table", getAllFieldsByTable);
 
 // NOTE: this must be the last handler for all requests as this falls back to the client routes
 app.use(getAppBundle);
