@@ -20,7 +20,6 @@ export function HomePage({
   );
 
   // Merge computed count into each cluster
-  // TODO: replace filter with step 1 (cluster.program_ids) + step 2 (agency.program_id) once schema is confirmed
   const clusters: ClusterData[] = (initialData?.clusters || []).map((c: any) => ({
     ...c,
     program_count: programs.filter(
