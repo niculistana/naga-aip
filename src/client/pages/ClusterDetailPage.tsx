@@ -28,7 +28,9 @@ function toTitleCase(str: string): string {
 export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   const { cluster, agencies, programs } = data;
 
-  const [selectedAgencyIds, setSelectedAgencyIds] = useState<Set<string>>(new Set());
+  const [selectedAgencyIds, setSelectedAgencyIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   function toggleAgency(agencyId: string) {
     setSelectedAgencyIds((prev) => {
@@ -39,7 +41,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   }
 
   const agencyMap = new Map<string, string>(
-    agencies.map((a) => [String(a.id), a.abbreviation])
+    agencies.map((a) => [String(a.id), a.abbreviation]),
   );
 
   const filteredPrograms =
@@ -67,7 +69,10 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
         <h1 className="text-2xl font-bold text-gray-800">
           {toTitleCase(cluster.name)}
         </h1>
-        <Link to="/home" className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mb-2">
+        <Link
+          to="/home"
+          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline mb-2"
+        >
           ← Back to Clusters
         </Link>
         <p className="text-sm text-gray-500 mt-1">
