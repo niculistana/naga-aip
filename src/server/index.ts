@@ -32,6 +32,11 @@ app.use(morgan("tiny"));
 
 app.get("/api/data/one/:table/id/:id", getOneByTableAndId(dbClient, cache));
 
+app.get(
+  "/api/data/one/:table/name/:name",
+  getOneByTableAndName(dbClient, cache),
+);
+
 app.get("/api/data/all/:table", getAllByTable(dbClient, cache));
 app.get(
   "/api/data/one/:table/name/:name",
