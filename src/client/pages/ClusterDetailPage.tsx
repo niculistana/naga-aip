@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { List } from "@bettergov/kapwa/list";
 import type { ListSectionItem } from "@bettergov/kapwa/list";
+import { Link } from "react-router";
 
 interface Agency {
   id: string;
@@ -66,6 +67,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
         <h1 className="text-2xl font-bold text-gray-800">
           {toTitleCase(cluster.name)}
         </h1>
+        <Link to="/home" className="...">← Back to Home</Link>
         <p className="text-sm text-gray-500 mt-1">
           {programs.length} program{programs.length !== 1 ? "s" : ""} ·{" "}
           {agencies.length} agenc{agencies.length !== 1 ? "ies" : "y"}
