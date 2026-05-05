@@ -3,12 +3,19 @@
 
 **Getting Started**
 
-1. Clone the app: git clone https://github.com/niculistana/naga-aip.git
+1. Clone the app: `git clone https://github.com/niculistana/naga-aip.git`
 2. Install `pnpm`: `npm install -g pnpm`
-3. Install `vite`: `pnpm add -g vite`
 3. Install modules: `pnpm install`
-4. Add `.env`
-5. Run `pnpm run dev` to start client dev server. NOTE: This copies public api to .env, also root path loads all data upfront so it could take a while to load.
+4. Set up `.env`: the `dev` script does this automatically on Unix/macOS/Linux. See the note below for Windows.
+5. Run `pnpm run dev` to start the dev server. NOTE: Root path loads all data upfront so it could take a while to load.
+
+> **Windows users:** The `dev` and `dev:local` scripts use Unix shell commands (`cat`, `read`, `sed`) that don't work in PowerShell or Command Prompt. Use one of the following options:
+> - Run from **Git Bash** or **WSL**
+> - Or manually copy the env file once before running Vite:
+>   ```
+>   copy .env.development.example .env
+>   pnpm vite
+>   ```
 
 
 **Main priority**
