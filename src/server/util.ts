@@ -1,10 +1,11 @@
 import path from "path";
+const DEFAULT_ALLOWED_FIELDS = ["id", "created_at", "updated_at"];
 
 export const getAllowedFieldsForTable = (table: string) => {
   switch (table) {
     case "clusters":
       return [
-        "id",
+        ...DEFAULT_ALLOWED_FIELDS,
         "description",
         "name",
         "offices",
@@ -17,7 +18,7 @@ export const getAllowedFieldsForTable = (table: string) => {
       ];
     case "agencies":
       return [
-        "id",
+        ...DEFAULT_ALLOWED_FIELDS,
         "abbreviation",
         "cluster_id",
         "description",
@@ -26,7 +27,7 @@ export const getAllowedFieldsForTable = (table: string) => {
       ];
     case "programs":
       return [
-        "id",
+        ...DEFAULT_ALLOWED_FIELDS,
         "agency_id",
         "aip_reference_code",
         "description",
@@ -35,7 +36,7 @@ export const getAllowedFieldsForTable = (table: string) => {
         "name",
       ];
     case "amounts":
-      return ["id", "amount", "category", "program_id"];
+      return [...DEFAULT_ALLOWED_FIELDS, "amount", "category", "program_id"];
     default:
       return [];
   }
@@ -73,7 +74,9 @@ export const coerceNumericFields = <T>(table: string, rows: T): T => {
       return row;
     }
 
-    const nextRow: Record<string, unknown> = { ...(row as Record<string, unknown>) };
+    const nextRow: Record<string, unknown> = {
+      ...(row as Record<string, unknown>),
+    };
 
     for (const field of numericFields) {
       const value = nextRow[field];
@@ -87,12 +90,13 @@ export const coerceNumericFields = <T>(table: string, rows: T): T => {
 };
 
 export const allowedFields = [
-  ...getAllowedFieldsForTable("clusters"),
-  ...getAllowedFieldsForTable("agencies"),
-  ...getAllowedFieldsForTable("programs"),
-  ...getAllowedFieldsForTable("amounts"),
-  "created_at",
-  "updated_at",
+  ...new Set([
+    ...DEFAULT_ALLOWED_FIELDS,
+    ...getAllowedFieldsForTable("clusters"),
+    ...getAllowedFieldsForTable("agencies"),
+    ...getAllowedFieldsForTable("programs"),
+    ...getAllowedFieldsForTable("amounts"),
+  ]),
 ];
 
 export const allowedTables = ["clusters", "agencies", "programs", "amounts"];

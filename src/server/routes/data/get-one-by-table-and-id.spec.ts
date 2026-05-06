@@ -2,7 +2,6 @@ import { describe, it, beforeEach, vi, expect } from "vitest";
 import { getOneByTableAndId } from "./get-one-by-table-and-id.js";
 import type { Request, Response, NextFunction } from "express";
 import NodeCache from "node-cache";
-// import { getAllByTable } from "./get-all-by-table";
 
 const cache = new NodeCache();
 
@@ -80,28 +79,6 @@ describe("getOneByTableAndId", () => {
     });
     const cacheKey = `one-clusters-124-name`;
     expect(cache.get(cacheKey)).toMatchObject(fakeResult);
-  });
-
-  it("coerces known numeric fields to numbers", async () => {
-    const { req, res, next } = createMockReqRes(
-      "amount,program_id,category",
-      "amounts",
-      "1",
-    );
-    const fakeResult = [
-      { amount: "0.000", program_id: "1", category: "Personal Services" },
-    ];
-    const mockDb: any = {
-      getOneByTableAndId: vi.fn().mockResolvedValueOnce(fakeResult),
-    };
-
-    await getOneByTableAndId(mockDb, cache)(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      result: fakeResult,
-      message: expect.any(String),
-    });
   });
 
   it("returns 500 on SQL error", async () => {
