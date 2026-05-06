@@ -27,7 +27,10 @@ describe("getOneByTableAndId", () => {
 
   it("returns 400 if fields param is missing", async () => {
     const { req, res, next } = createMockReqRes("", "clusters", "123");
-    await getOneByTableAndId(vi.fn(), cache)(req, res, next);
+    const mockDb: any = {
+      getOneByTableAndId: vi.fn(),
+    };
+    await getOneByTableAndId(mockDb, cache)(req, res, next);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       message: expect.stringMatching(/Fields query params/),
@@ -40,7 +43,10 @@ describe("getOneByTableAndId", () => {
       "clusters",
       "123",
     );
-    await getOneByTableAndId(vi.fn(), cache)(req, res, next);
+    const mockDb: any = {
+      getOneByTableAndId: vi.fn(),
+    };
+    await getOneByTableAndId(mockDb, cache)(req, res, next);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ message: "Bad request" });
   });
@@ -49,9 +55,10 @@ describe("getOneByTableAndId", () => {
     const { req, res, next } = createMockReqRes();
     const cacheKey = `one-clusters-123-name`;
     cache.set(cacheKey, [{ name: "Test" }]);
-    const mockSql: any = vi.fn();
-    mockSql.unsafe = vi.fn((str) => str);
-    await getOneByTableAndId(mockSql, cache)(req, res, next);
+    const mockDb: any = {
+      getOneByTableAndId: vi.fn(),
+    };
+    await getOneByTableAndId(mockDb, cache)(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       result: [{ name: "Test" }],
@@ -62,9 +69,10 @@ describe("getOneByTableAndId", () => {
   it("queries DB and caches result if not cached", async () => {
     const { req, res, next } = createMockReqRes("name", "clusters", "124");
     const fakeResult = [{ name: "Cluster123" }];
-    const mockSql: any = vi.fn().mockResolvedValueOnce(fakeResult);
-    mockSql.unsafe = vi.fn((str) => str);
-    await getOneByTableAndId(mockSql, cache)(req, res, next);
+    const mockDb: any = {
+      getOneByTableAndId: vi.fn().mockResolvedValueOnce(fakeResult),
+    };
+    await getOneByTableAndId(mockDb, cache)(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       result: fakeResult,
@@ -83,23 +91,25 @@ describe("getOneByTableAndId", () => {
     const fakeResult = [
       { amount: "0.000", program_id: "1", category: "Personal Services" },
     ];
-    const mockSql: any = vi.fn().mockResolvedValueOnce(fakeResult);
-    mockSql.unsafe = vi.fn((str) => str);
+    const mockDb: any = {
+      getOneByTableAndId: vi.fn().mockResolvedValueOnce(fakeResult),
+    };
 
-    await getOneByTableAndId(mockSql, cache)(req, res, next);
+    await getOneByTableAndId(mockDb, cache)(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
-      result: [{ amount: 0, program_id: 1, category: "Personal Services" }],
+      result: fakeResult,
       message: expect.any(String),
     });
   });
 
   it("returns 500 on SQL error", async () => {
     const { req, res, next } = createMockReqRes();
-    const mockSql: any = vi.fn().mockRejectedValueOnce(new Error("fail"));
-    mockSql.unsafe = vi.fn((str) => str);
-    await getOneByTableAndId(mockSql, cache)(req, res, next);
+    const mockDb: any = {
+      getOneByTableAndId: vi.fn().mockRejectedValueOnce(new Error("fail")),
+    };
+    await getOneByTableAndId(mockDb, cache)(req, res, next);
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({ message: "Internal server error" }),

@@ -1,11 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import type NodeCache from "node-cache";
+import type { DBClient } from "../../db/db-client.js";
 import { allowedTables } from "../../util.js";
 import { getAllowedFieldsForTable } from "../../util.js";
-import { coerceNumericFields } from "../../util.js";
 
 export const getAllByTable =
-  (sql: any, cache: NodeCache) =>
+  (db: DBClient, cache: NodeCache) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const table = req.params.table;
     const fields = req.query.fields;
@@ -19,7 +19,7 @@ export const getAllByTable =
     if (!fields?.length) {
       return res
         .status(400)
-        .json({ message: "Fields query params are are required" });
+        .json({ message: "Fields query params are required" });
     }
 
     const allowedFields = getAllowedFieldsForTable(table.toString());
@@ -45,9 +45,7 @@ export const getAllByTable =
     let result = {};
 
     try {
-      const rawResult =
-        await sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)}`;
-      result = coerceNumericFields(table.toString(), rawResult);
+      result = await db.getAllByTable(table.toString(), safeFields);
       cache.set(cacheKey, result);
     } catch (e) {
       return res.status(500).json({

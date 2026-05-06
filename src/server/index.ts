@@ -12,7 +12,7 @@ import NodeCache from "node-cache";
 import { getAllTables } from "./routes/tables/get-all-tables.js";
 import { getAllByTable } from "./routes/data/get-all-by-table.js";
 import { getOneByTableAndId } from "./routes/data/get-one-by-table-and-id.js";
-import { sql } from "./db/index.js";
+import { dbClient } from "./db/db-client.js";
 import { getAppBundle } from "./routes/app/get-app-bundle.js";
 import { getStaticAssets } from "./middleware/assets/index.js";
 import { getAllFields } from "./routes/fields/get-all-fields.js";
@@ -29,9 +29,9 @@ app.use("/naga-seal.png", getStaticAssets("/naga-seal.png"));
 
 app.use(morgan("tiny"));
 
-app.get("/api/data/one/:table/id/:id", getOneByTableAndId(sql, cache));
+app.get("/api/data/one/:table/id/:id", getOneByTableAndId(dbClient, cache));
 
-app.get("/api/data/all/:table", getAllByTable(sql, cache));
+app.get("/api/data/all/:table", getAllByTable(dbClient, cache));
 
 app.get("/api/tables", getAllTables);
 
