@@ -7,7 +7,7 @@ import { getAllowedFieldsForTable } from "../../util.js";
 export const getAllByTable =
   (db: DBClient, cache: NodeCache) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    const table = req.params.table;
+    const table = req.params.table.toString();
     const fields = req.query.fields;
 
     if (!table?.length || !allowedTables.includes(table.toString())) {
@@ -22,7 +22,13 @@ export const getAllByTable =
         .json({ message: "Fields query params are required" });
     }
 
-    const allowedFields = getAllowedFieldsForTable(table.toString());
+    if (!table?.length || !allowedTables.includes(table.toString())) {
+      return res.status(400).json({
+        message: "Invalid table, please see GET /api/tables for valid tables",
+      });
+    }
+
+    const allowedFields = getAllowedFieldsForTable(table);
     const filterParams = (str: string) => allowedFields.includes(str);
     const safeFields = fields.toString().split(",").filter(filterParams);
     const safeFieldsStr = safeFields.join(", ");

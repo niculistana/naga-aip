@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
 
 import { allowedTables } from "../../util.js";
-import { allowedFields } from "../../util.js";
+import { getAllowedFieldsForTable } from "../../util.js";
 import type NodeCache from "node-cache";
 import type { DBClient } from "../../db/db-client.js";
 
 export const getOneByTableAndId =
   (db: DBClient, cache: NodeCache) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    const table = req.params.table;
+    const table = req.params.table.toString();
     const id = req.params.id;
     const fields = req.query.fields;
 
@@ -24,6 +24,13 @@ export const getOneByTableAndId =
         .json({ message: "Fields query params are required" });
     }
 
+    if (!table?.length || !allowedTables.includes(table.toString())) {
+      return res.status(400).json({
+        message: "Invalid table, please see GET /api/tables for valid tables",
+      });
+    }
+
+    const allowedFields = getAllowedFieldsForTable(table);
     const filterParams = (str: string) => allowedFields.includes(str);
     const safeFields = fields.toString().split(",").filter(filterParams);
     const safeFieldsStr = safeFields.join(", ");
