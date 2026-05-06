@@ -1,13 +1,15 @@
 import type { Request, Response, NextFunction } from "express";
-import type NodeCache from "node-cache";
-import { allowedTables } from "../../util.js";
-import { getAllowedFieldsForTable } from "../../util.js";
-import { coerceNumericFields } from "../../util.js";
 
-export const getAllByTable =
+import { allowedTables } from "../../util.js";
+import { allowedFields } from "../../util.js";
+import { coerceNumericFields } from "../../util.js";
+import type NodeCache from "node-cache";
+
+export const getOneByTableAndName =
   (sql: any, cache: NodeCache) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const table = req.params.table;
+    const name = req.params.name;
     const fields = req.query.fields;
 
     if (!table?.length || !allowedTables.includes(table.toString())) {
@@ -22,7 +24,6 @@ export const getAllByTable =
         .json({ message: "Fields query params are are required" });
     }
 
-    const allowedFields = getAllowedFieldsForTable(table.toString());
     const filterParams = (str: string) => allowedFields.includes(str);
     const safeFields = fields.toString().split(",").filter(filterParams);
     const safeFieldsStr = safeFields.join(", ");
@@ -36,7 +37,7 @@ export const getAllByTable =
       return res.status(400).json({ message: "Bad request" });
     }
 
-    const cacheKey = `all-${table}-${safeFieldsStr}`;
+    const cacheKey = `one-${table}-${name}-${safeFieldsStr}`;
     if (cache.has(cacheKey)) {
       const cachedResult = cache.get(cacheKey);
       return res.status(200).json({ result: cachedResult, message });
@@ -46,7 +47,7 @@ export const getAllByTable =
 
     try {
       const rawResult =
-        await sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)}`;
+        await sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)} where name = ${name}`;
       result = coerceNumericFields(table.toString(), rawResult);
       cache.set(cacheKey, result);
     } catch (e) {

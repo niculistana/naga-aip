@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 
 import { allowedTables } from "../../util.js";
 import { allowedFields } from "../../util.js";
+import { coerceNumericFields } from "../../util.js";
 import type NodeCache from "node-cache";
 
 export const getOneByTableAndId =
@@ -45,8 +46,9 @@ export const getOneByTableAndId =
     let result = {};
 
     try {
-      result =
+      const rawResult =
         await sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)} where id = ${id}`;
+      result = coerceNumericFields(table.toString(), rawResult);
       cache.set(cacheKey, result);
     } catch (e) {
       return res.status(500).json({

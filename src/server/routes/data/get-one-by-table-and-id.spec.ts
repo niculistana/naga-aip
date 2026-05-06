@@ -74,6 +74,27 @@ describe("getOneByTableAndId", () => {
     expect(cache.get(cacheKey)).toMatchObject(fakeResult);
   });
 
+  it("coerces known numeric fields to numbers", async () => {
+    const { req, res, next } = createMockReqRes(
+      "amount,program_id,category",
+      "amounts",
+      "1",
+    );
+    const fakeResult = [
+      { amount: "0.000", program_id: "1", category: "Personal Services" },
+    ];
+    const mockSql: any = vi.fn().mockResolvedValueOnce(fakeResult);
+    mockSql.unsafe = vi.fn((str) => str);
+
+    await getOneByTableAndId(mockSql, cache)(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      result: [{ amount: 0, program_id: 1, category: "Personal Services" }],
+      message: expect.any(String),
+    });
+  });
+
   it("returns 500 on SQL error", async () => {
     const { req, res, next } = createMockReqRes();
     const mockSql: any = vi.fn().mockRejectedValueOnce(new Error("fail"));

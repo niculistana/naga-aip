@@ -41,6 +41,51 @@ export const getAllowedFieldsForTable = (table: string) => {
   }
 };
 
+const numericFieldsByTable: Record<string, Set<string>> = {
+  clusters: new Set(["id", "paps_count", "total", "year"]),
+  agencies: new Set(["id", "cluster_id", "year"]),
+  programs: new Set(["id", "agency_id"]),
+  amounts: new Set(["id", "amount", "program_id"]),
+};
+
+const coerceStringToNumber = (value: string): string | number => {
+  const trimmed = value.trim();
+  if (!trimmed.length) {
+    return value;
+  }
+
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : value;
+};
+
+export const coerceNumericFields = <T>(table: string, rows: T): T => {
+  if (!Array.isArray(rows)) {
+    return rows;
+  }
+
+  const numericFields = numericFieldsByTable[table];
+  if (!numericFields) {
+    return rows;
+  }
+
+  return rows.map((row) => {
+    if (!row || typeof row !== "object") {
+      return row;
+    }
+
+    const nextRow: Record<string, unknown> = { ...(row as Record<string, unknown>) };
+
+    for (const field of numericFields) {
+      const value = nextRow[field];
+      if (typeof value === "string") {
+        nextRow[field] = coerceStringToNumber(value);
+      }
+    }
+
+    return nextRow;
+  }) as T;
+};
+
 export const allowedFields = [
   ...getAllowedFieldsForTable("clusters"),
   ...getAllowedFieldsForTable("agencies"),
