@@ -22,12 +22,6 @@ export const getAllByTable =
         .json({ message: "Fields query params are required" });
     }
 
-    if (!table?.length || !allowedTables.includes(table.toString())) {
-      return res.status(400).json({
-        message: "Invalid table, please see GET /api/tables for valid tables",
-      });
-    }
-
     const allowedFields = getAllowedFieldsForTable(table);
     const filterParams = (str: string) => allowedFields.includes(str);
     const safeFields = fields.toString().split(",").filter(filterParams);
