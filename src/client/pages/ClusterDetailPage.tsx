@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { List } from "@bettergov/kapwa/list";
 import type { ListSectionItem } from "@bettergov/kapwa/list";
 import { Link } from "react-router";
@@ -25,6 +25,7 @@ interface ClusterDetailData {
 
 export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   const { cluster, agencies, programs } = data;
+  const topRef = useRef<HTMLDivElement>(null);
 
   const [selectedAgencyIds, setSelectedAgencyIds] = useState<Set<string>>(
     new Set(),
@@ -74,7 +75,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div ref={topRef} className="w-full max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">{cluster.name}</h1>
         <Link
@@ -130,7 +131,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
           <List
             title="Programs"
             headerTitle="Program List"
-            headerSubtitle={`Showing ${visibleStart}-${visibleEnd} of ${filteredPrograms.length} programs`}
+            headerSubtitle={`Showing ${visibleStart}-${visibleEnd} of ${filteredPrograms.length} programs · Page ${currentPageClamped} of ${totalPages}`}
             listItems={listItems}
           />
 
@@ -138,9 +139,10 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
             <div className="mt-4 flex items-center justify-between gap-3 rounded-md border border-gray-200 bg-white px-3 py-2 shadow-sm">
               <button
                 type="button"
-                onClick={() =>
-                  setCurrentPage((page) => Math.max(1, page - 1))
-                }
+                onClick={() => {
+                  setCurrentPage((page) => Math.max(1, page - 1));
+                  topRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 disabled={currentPageClamped === 1}
                 className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:border disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
               >
@@ -153,9 +155,10 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
 
               <button
                 type="button"
-                onClick={() =>
-                  setCurrentPage((page) => Math.min(totalPages, page + 1))
-                }
+                onClick={() => {
+                  setCurrentPage((page) => Math.min(totalPages, page + 1));
+                  topRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 disabled={currentPageClamped === totalPages}
                 className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:border disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
               >
