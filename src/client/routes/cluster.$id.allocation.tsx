@@ -7,7 +7,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const [agenciesRes, programsRes, clustersRes] = await Promise.all([
     getAllByTable({ table: "agencies", fields: ["id", "abbreviation", "cluster_id"] }),
-    getAllByTable({ table: "programs", fields: ["id", "name", "agency_id"] }),
+    getAllByTable({ table: "programs", fields: ["id", "name", "agency_id", "implementation_start", "implementation_end"] }),
     getAllByTable({ table: "clusters", fields: ["id", "name"] }),
   ]);
 
