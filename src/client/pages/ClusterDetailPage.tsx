@@ -135,7 +135,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
           />
 
           {filteredPrograms.length > PAGE_SIZE ? (
-            <div className="sticky bottom-0 z-10 mt-4 flex items-center justify-between gap-3 border-t border-gray-200 bg-white/95 px-3 py-2 backdrop-blur shadow-[0_-2px_8px_rgba(15,23,42,0.06)]">
+            <div className="mt-4 flex items-center justify-between gap-3 rounded-md border border-gray-200 bg-white px-3 py-2 shadow-sm">
               <button
                 type="button"
                 onClick={() =>
