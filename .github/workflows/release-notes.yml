@@ -1,0 +1,78 @@
+name: Generate Release Notes on Push to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release-notes:
+    runs-on: ubuntu-latest
+    # Skip if this push is itself the release notes commit to avoid infinite loops
+    if: "!startsWith(github.event.head_commit.message, 'chore: release notes')"
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and append release notes entry
+        id: build_entry
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+
+          # When before is all zeros it's the first push on this branch
+          if [[ "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
+            COMMITS=$(git log "$AFTER" --no-merges --pretty=format:"- %s (%h)" | head -50)
+          else
+            COMMITS=$(git log "${BEFORE}..${AFTER}" --no-merges --pretty=format:"- %s (%h)")
+          fi
+
+          if [[ -z "$COMMITS" ]]; then
+            echo "no_commits=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          DATE=$(date -u +"%Y-%m-%d")
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          {
+            echo ""
+            echo "## ${DATE} — [run ${GITHUB_RUN_NUMBER}](${RUN_URL})"
+            echo ""
+            echo "$COMMITS"
+          } >> RELEASE_NOTES.md
+
+          echo "no_commits=false" >> "$GITHUB_OUTPUT"
+
+      - name: Initialise RELEASE_NOTES.md if it did not exist
+        if: steps.build_entry.outputs.no_commits != 'true'
+        run: |
+          # If the file was just created (not yet tracked), prepend a heading
+          if ! git ls-files --error-unmatch RELEASE_NOTES.md 2>/dev/null; then
+            BODY=$(cat RELEASE_NOTES.md)
+            printf '# Release Notes\n%s' "$BODY" > RELEASE_NOTES.md
+          fi
+
+      - name: Commit and push release notes
+        if: steps.build_entry.outputs.no_commits != 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add RELEASE_NOTES.md
+
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+
+          DATE=$(date -u +"%Y-%m-%d")
+          git commit -m "chore: release notes [${DATE}]"
+          git push

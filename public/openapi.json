@@ -145,6 +145,80 @@
         }
       }
     },
+    "/api/data/one/{table}/name/{name}": {
+      "get": {
+        "summary": "Get a single row from a table by name",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the table to query."
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name value of the row to retrieve."
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of fields to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The matching row.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (missing or invalid fields/table).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/tables": {
       "get": {
         "summary": "Get all available table names",
@@ -180,6 +254,47 @@
                     "type": "string"
                   },
                   "example": ["id", "name", "description", "total"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fields/{table}": {
+      "get": {
+        "summary": "Get all allowed field names for a table",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The table name to fetch allowed fields for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of allowed field names for the given table.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid table).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }

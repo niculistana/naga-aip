@@ -3,9 +3,9 @@ import { HomePage } from "@/pages/HomePage";
 import { getAllByTable } from "@/api/getAllByTable";
 
 export const clustersFields = [
+  "id",
   "description",
   "name",
-  "offices",
   "paps_count",
   "title",
   "subtitle",
@@ -21,6 +21,7 @@ export const agenciesFields = [
 ];
 
 export const programsFields = [
+  "id",
   "agency_id",
   "aip_reference_code",
   "name",

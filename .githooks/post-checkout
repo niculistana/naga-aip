@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+# Git passes old ref, new ref, and a flag for branch checkout vs file checkout.
+# We only run on branch checkouts.
+if [ "$3" != "1" ]; then
+  exit 0
+fi
+
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+
+# Skip rebasing when checking out develop itself or detached HEAD.
+if [ "$current_branch" = "develop" ] || [ "$current_branch" = "HEAD" ]; then
+  exit 0
+fi
+
+if [ "${current_branch#CU-}" = "$current_branch" ]; then
+    # Only rebase release branches that follow the ClickUp ticket naming convention.
+    echo "[post-checkout] Running: git fetch --all && git rebase origin/main"
+    git fetch --all && git rebase origin/main
+else
+    # Otherwise rebase non-release branch from develop
+    echo "[post-checkout] Running: git fetch --all && git rebase origin/develop"
+    git fetch --all && git rebase origin/develop
+fi

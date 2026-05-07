@@ -1,0 +1,11 @@
+allowBuilds:
+  "@scarf/scarf": false
+  "@sentry-internal/node-cpu-profiler": false
+  "@tree-sitter-grammars/tree-sitter-yaml": false
+  core-js: false
+  core-js-pure: false
+  esbuild: false
+  inotify: false
+  tree-sitter: false
+  tree-sitter-json: false
+  unrs-resolver: false
