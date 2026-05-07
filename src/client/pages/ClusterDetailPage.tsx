@@ -127,8 +127,8 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
         <>
           <List
             title="Programs"
-            headerTitle={cluster.name}
-            headerSubtitle={`${filteredPrograms.length} of ${programs.length} programs`}
+            headerTitle="Program List"
+            headerSubtitle={`Showing ${startIndex + 1}-${Math.min(startIndex + PAGE_SIZE, filteredPrograms.length)} of ${filteredPrograms.length} programs`}
             listItems={listItems}
           />
 
