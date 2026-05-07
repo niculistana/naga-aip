@@ -3,12 +3,13 @@ import type { Request, Response, NextFunction } from "express";
 import { allowedTables } from "../../util.js";
 import { allowedFields } from "../../util.js";
 import type NodeCache from "node-cache";
+import type { DBClient } from "../../db/db-client.js";
 
 export const getOneByTableAndName =
-  (sql: any, cache: NodeCache) =>
+  (db: DBClient, cache: NodeCache) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    const table = req.params.table;
-    const name = req.params.name;
+    const table = req.params.table.toString();
+    const name = req.params.name.toString();
     const fields = req.query.fields;
 
     if (!table?.length || !allowedTables.includes(table.toString())) {
@@ -45,8 +46,7 @@ export const getOneByTableAndName =
     let result = {};
 
     try {
-      result =
-        await sql`SELECT ${sql.unsafe(safeFieldsStr)} from ${sql.unsafe(table)} where name = ${name}`;
+      result = await db.getOneByTableAndName(table, safeFields, name);
       cache.set(cacheKey, result);
     } catch (e) {
       return res.status(500).json({

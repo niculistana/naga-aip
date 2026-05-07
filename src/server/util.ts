@@ -1,10 +1,11 @@
 import path from "path";
+const DEFAULT_ALLOWED_FIELDS = ["id", "created_at", "updated_at"];
 
 export const getAllowedFieldsForTable = (table: string) => {
   switch (table) {
     case "clusters":
       return [
-        "id",
+        ...DEFAULT_ALLOWED_FIELDS,
         "description",
         "name",
         "offices",
@@ -17,7 +18,7 @@ export const getAllowedFieldsForTable = (table: string) => {
       ];
     case "agencies":
       return [
-        "id",
+        ...DEFAULT_ALLOWED_FIELDS,
         "abbreviation",
         "cluster_id",
         "description",
@@ -26,7 +27,7 @@ export const getAllowedFieldsForTable = (table: string) => {
       ];
     case "programs":
       return [
-        "id",
+        ...DEFAULT_ALLOWED_FIELDS,
         "agency_id",
         "aip_reference_code",
         "description",
@@ -35,19 +36,67 @@ export const getAllowedFieldsForTable = (table: string) => {
         "name",
       ];
     case "amounts":
-      return ["id", "amount", "category", "program_id"];
+      return [...DEFAULT_ALLOWED_FIELDS, "amount", "category", "program_id"];
     default:
       return [];
   }
 };
 
+const numericFieldsByTable: Record<string, Set<string>> = {
+  clusters: new Set(["id", "paps_count", "total", "year"]),
+  agencies: new Set(["id", "cluster_id", "year"]),
+  programs: new Set(["id", "agency_id"]),
+  amounts: new Set(["id", "amount", "program_id"]),
+};
+
+const coerceStringToNumber = (value: string): string | number => {
+  const trimmed = value.trim();
+  if (!trimmed.length) {
+    return value;
+  }
+
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : value;
+};
+
+export const coerceNumericFields = <T>(table: string, rows: T): T => {
+  if (!Array.isArray(rows)) {
+    return rows;
+  }
+
+  const numericFields = numericFieldsByTable[table];
+  if (!numericFields) {
+    return rows;
+  }
+
+  return rows.map((row) => {
+    if (!row || typeof row !== "object") {
+      return row;
+    }
+
+    const nextRow: Record<string, unknown> = {
+      ...(row as Record<string, unknown>),
+    };
+
+    for (const field of numericFields) {
+      const value = nextRow[field];
+      if (typeof value === "string") {
+        nextRow[field] = coerceStringToNumber(value);
+      }
+    }
+
+    return nextRow;
+  }) as T;
+};
+
 export const allowedFields = [
-  ...getAllowedFieldsForTable("clusters"),
-  ...getAllowedFieldsForTable("agencies"),
-  ...getAllowedFieldsForTable("programs"),
-  ...getAllowedFieldsForTable("amounts"),
-  "created_at",
-  "updated_at",
+  ...new Set([
+    ...DEFAULT_ALLOWED_FIELDS,
+    ...getAllowedFieldsForTable("clusters"),
+    ...getAllowedFieldsForTable("agencies"),
+    ...getAllowedFieldsForTable("programs"),
+    ...getAllowedFieldsForTable("amounts"),
+  ]),
 ];
 
 export const allowedTables = ["clusters", "agencies", "programs", "amounts"];
