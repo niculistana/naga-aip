@@ -40,3 +40,6 @@
 - feat(clusters): add ClusterCard component with Kapwa Card and program count placeholder [a976fca](http://github.com/niculistana/naga-aip/commit/a976fca)
 - chore: install bgov@kapwa with updated lucide-react@^0.575.0 peerdependency [90305d7](http://github.com/niculistana/naga-aip/commit/90305d7)
 - chore: remove lucide-react@^1.9.0 [b3f4cfa](http://github.com/niculistana/naga-aip/commit/b3f4cfa)
+## 2026-05-07 — [run 2](https://github.com/niculistana/naga-aip/actions/runs/25516458266)
+
+- fix: hotfix release notes and release-notes workflow [28f17d9](https://github.com/niculistana/naga-aip/commit/28f17d9)
