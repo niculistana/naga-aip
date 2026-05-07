@@ -52,6 +52,8 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   const totalPages = Math.max(1, Math.ceil(filteredPrograms.length / PAGE_SIZE));
   const currentPageClamped = Math.min(currentPage, totalPages);
   const startIndex = (currentPageClamped - 1) * PAGE_SIZE;
+  const visibleStart = filteredPrograms.length === 0 ? 0 : startIndex + 1;
+  const visibleEnd = Math.min(startIndex + PAGE_SIZE, filteredPrograms.length);
   const paginatedPrograms = filteredPrograms.slice(
     startIndex,
     startIndex + PAGE_SIZE,
@@ -128,25 +130,25 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
           <List
             title="Programs"
             headerTitle="Program List"
-            headerSubtitle={`Showing ${startIndex + 1}-${Math.min(startIndex + PAGE_SIZE, filteredPrograms.length)} of ${filteredPrograms.length} programs`}
+            headerSubtitle={`Showing ${visibleStart}-${visibleEnd} of ${filteredPrograms.length} programs`}
             listItems={listItems}
           />
 
           {filteredPrograms.length > PAGE_SIZE ? (
-            <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="sticky bottom-0 z-10 mt-4 flex items-center justify-between gap-3 border-t border-gray-200 bg-white/95 px-3 py-2 backdrop-blur shadow-[0_-2px_8px_rgba(15,23,42,0.06)]">
               <button
                 type="button"
                 onClick={() =>
                   setCurrentPage((page) => Math.max(1, page - 1))
                 }
                 disabled={currentPageClamped === 1}
-                className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 transition-colors hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:border disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
               >
                 Previous
               </button>
 
               <p className="text-sm text-gray-500">
-                Page {currentPageClamped} of {totalPages}
+                Showing {visibleStart}-{visibleEnd} of {filteredPrograms.length} · Page {currentPageClamped} of {totalPages}
               </p>
 
               <button
@@ -155,7 +157,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
                   setCurrentPage((page) => Math.min(totalPages, page + 1))
                 }
                 disabled={currentPageClamped === totalPages}
-                className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 transition-colors hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:border disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
               >
                 Next
               </button>
