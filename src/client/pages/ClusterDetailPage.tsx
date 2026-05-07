@@ -15,6 +15,14 @@ interface Program {
   id: string;
   name: string;
   agency_id: string;
+  implementation_start: string | null;
+  implementation_end: string | null;
+}
+
+function getStatus(start: string | null, end: string | null): "Active" | "Inactive" {
+  if (!start || !end) return "Inactive";
+  const today = new Date();
+  return today >= new Date(start) && today <= new Date(end) ? "Active" : "Inactive";
 }
 
 interface ClusterDetailData {
@@ -63,7 +71,7 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   const listItems: ListSectionItem[] = paginatedPrograms.map((p) => ({
     id: Number(p.id),
     title: p.name,
-    category: agencyMap.get(String(p.agency_id)) ?? "Unknown",
+    category: `${agencyMap.get(String(p.agency_id)) ?? "Unknown"} · ${getStatus(p.implementation_start, p.implementation_end)}`,
   }));
 
   if (!cluster) {
