@@ -3,6 +3,8 @@ import { List } from "@bettergov/kapwa/list";
 import type { ListSectionItem } from "@bettergov/kapwa/list";
 import { Link } from "react-router";
 
+const PAGE_SIZE = 10;
+
 interface Agency {
   id: string;
   abbreviation: string;
@@ -27,11 +29,13 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
   const [selectedAgencyIds, setSelectedAgencyIds] = useState<Set<string>>(
     new Set(),
   );
+  const [currentPage, setCurrentPage] = useState(1);
 
   function toggleAgency(agencyId: string) {
     setSelectedAgencyIds((prev) => {
       const next = new Set(prev);
       next.has(agencyId) ? next.delete(agencyId) : next.add(agencyId);
+      setCurrentPage(1);
       return next;
     });
   }
@@ -45,7 +49,15 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
       ? programs
       : programs.filter((p) => selectedAgencyIds.has(String(p.agency_id)));
 
-  const listItems: ListSectionItem[] = filteredPrograms.map((p) => ({
+  const totalPages = Math.max(1, Math.ceil(filteredPrograms.length / PAGE_SIZE));
+  const currentPageClamped = Math.min(currentPage, totalPages);
+  const startIndex = (currentPageClamped - 1) * PAGE_SIZE;
+  const paginatedPrograms = filteredPrograms.slice(
+    startIndex,
+    startIndex + PAGE_SIZE,
+  );
+
+  const listItems: ListSectionItem[] = paginatedPrograms.map((p) => ({
     id: Number(p.id),
     title: p.name,
     category: agencyMap.get(String(p.agency_id)) ?? "Unknown",
@@ -79,7 +91,10 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
       <div className="flex flex-wrap gap-2 mb-6">
         <button
           type="button"
-          onClick={() => setSelectedAgencyIds(new Set())}
+          onClick={() => {
+            setSelectedAgencyIds(new Set());
+            setCurrentPage(1);
+          }}
           className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
             selectedAgencyIds.size === 0
               ? "bg-blue-600 text-white border-blue-600"
@@ -109,12 +124,44 @@ export function ClusterDetailPage({ data }: { data: ClusterDetailData }) {
           No programs found for the selected filter.
         </p>
       ) : (
-        <List
-          title="Programs"
-          headerTitle={cluster.name}
-          headerSubtitle={`${filteredPrograms.length} of ${programs.length} programs`}
-          listItems={listItems}
-        />
+        <>
+          <List
+            title="Programs"
+            headerTitle={cluster.name}
+            headerSubtitle={`${filteredPrograms.length} of ${programs.length} programs`}
+            listItems={listItems}
+          />
+
+          {filteredPrograms.length > PAGE_SIZE ? (
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage((page) => Math.max(1, page - 1))
+                }
+                disabled={currentPageClamped === 1}
+                className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 transition-colors hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Previous
+              </button>
+
+              <p className="text-sm text-gray-500">
+                Page {currentPageClamped} of {totalPages}
+              </p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage((page) => Math.min(totalPages, page + 1))
+                }
+                disabled={currentPageClamped === totalPages}
+                className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 transition-colors hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          ) : null}
+        </>
       )}
     </div>
   );
