@@ -1,6 +1,8 @@
 import path from "path";
 const DEFAULT_ALLOWED_FIELDS = ["id", "created_at", "updated_at"];
 
+export const disclaimerMessage = 'This API may be missing data which we are actively looking to add to, please file a request on Github to prioritize it.'
+
 export const getAllowedFieldsForTable = (table: string) => {
   switch (table) {
     case "clusters":

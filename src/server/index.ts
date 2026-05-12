@@ -18,6 +18,9 @@ import { getStaticAssets } from "./middleware/assets/index.js";
 import { getAllFields } from "./routes/fields/get-all-fields.js";
 import { getAllFieldsByTable } from "./routes/fields/get-all-fields-by-table.js";
 import { getOneByTableAndName } from "./routes/data/get-one-by-table-and-name.js";
+import { getSectorsFromClusters } from "./routes/data/get-sectors-from-raw-clusters.js";
+import { getProgramsFromRawPrograms } from "./routes/data/get-programs-from-raw-programs.js";
+import { getUnitsFromRawAgencies } from "./routes/data/get-units-from-agencies.js";
 
 const app = express();
 const cache = new NodeCache({
@@ -42,6 +45,12 @@ app.get(
   "/api/data/one/:table/name/:name",
   getOneByTableAndName(dbClient, cache),
 );
+
+app.get("/api/sectors", getSectorsFromClusters(dbClient, cache));
+
+app.get("/api/programs", getProgramsFromRawPrograms(dbClient, cache));
+
+app.get("/api/units", getUnitsFromRawAgencies(dbClient, cache));
 
 app.get("/api/tables", getAllTables);
 
