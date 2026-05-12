@@ -21,17 +21,17 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and append release notes entry
+      - name: Build and prepend release notes entry
         id: build_entry
         run: |
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.event.after }}"
 
-          # When before is all zeros it's the first push on this branch
-          if [[ "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
-            COMMITS=$(git log "$AFTER" --no-merges --pretty=format:"- %s [%h](https://github.com/${{ github.repository }}/commit/%h)" | head -50)
-          else
+          # Force-pushes can make github.event.before unreachable/invalid.
+          if [[ "$BEFORE" != "0000000000000000000000000000000000000000" ]] && git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
             COMMITS=$(git log "${BEFORE}..${AFTER}" --no-merges --pretty=format:"- %s [%h](https://github.com/${{ github.repository }}/commit/%h)")
+          else
+            COMMITS=$(git log "$AFTER" --no-merges --pretty=format:"- %s [%h](https://github.com/${{ github.repository }}/commit/%h)" | head -50)
           fi
 
           if [[ -z "$COMMITS" ]]; then
@@ -40,45 +40,75 @@ jobs:
           fi
 
           DATE=$(date -u +"%Y-%m-%d")
-          
+
           # Try to find PR number from merge commits in this push
           PR_NUMBER=""
-          if [[ "$BEFORE" == "0000000000000000000000000000000000000000" ]]; then
-            MERGE_COMMITS=$(git log "$AFTER" --oneline --grep="Merge pull request" | head -1)
-          else
+          if [[ "$BEFORE" != "0000000000000000000000000000000000000000" ]] && git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
             MERGE_COMMITS=$(git log "${BEFORE}..${AFTER}" --oneline --grep="Merge pull request" | head -1)
+          else
+            MERGE_COMMITS=$(git log "$AFTER" --oneline --grep="Merge pull request" | head -1)
           fi
-          
+
           if [[ -n "$MERGE_COMMITS" ]]; then
             # Extract PR number from "Merge pull request #123"
             PR_NUMBER=$(echo "$MERGE_COMMITS" | grep -oP '#\K[0-9]+' | head -1)
           fi
-          
-          # Build header with PR link if available, otherwise use run link
+
+          # Build header with PR title if available, otherwise use run link
           if [[ -n "$PR_NUMBER" ]]; then
-            HEADER="## ${DATE} — [PR #${PR_NUMBER}](https://github.com/${{ github.repository }}/pull/${PR_NUMBER})"
+            PR_TITLE=$(curl -fsSL \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" \
+              | jq -r '.title // empty')
+
+            if [[ -n "$PR_TITLE" ]]; then
+              HEADER="## ${DATE} — [${PR_TITLE}](https://github.com/${{ github.repository }}/pull/${PR_NUMBER})"
+            else
+              HEADER="## ${DATE} — [PR #${PR_NUMBER}](https://github.com/${{ github.repository }}/pull/${PR_NUMBER})"
+            fi
           else
-            RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            HEADER="## ${DATE} — [run ${GITHUB_RUN_NUMBER}](${RUN_URL})"
+              LATEST_COMMIT_SHA="$AFTER"
+              LATEST_COMMIT_MSG=$(git log -1 --pretty=%s "$LATEST_COMMIT_SHA")
+              COMMIT_URL="https://github.com/${{ github.repository }}/commit/${LATEST_COMMIT_SHA}"
+              HEADER="## ${DATE} — [${LATEST_COMMIT_MSG}](${COMMIT_URL})"
           fi
 
+          ENTRY_FILE=$(mktemp)
           {
-            echo ""
             echo "$HEADER"
             echo ""
             echo "$COMMITS"
-          } >> RELEASE_NOTES.md
+            echo ""
+          } > "$ENTRY_FILE"
+
+          if [[ -f RELEASE_NOTES.md ]]; then
+            if head -n 1 RELEASE_NOTES.md | grep -q '^# Release Notes'; then
+              {
+                echo "# Release Notes"
+                echo ""
+                cat "$ENTRY_FILE"
+                tail -n +2 RELEASE_NOTES.md
+              } > RELEASE_NOTES.new.md
+            else
+              {
+                echo "# Release Notes"
+                echo ""
+                cat "$ENTRY_FILE"
+                cat RELEASE_NOTES.md
+              } > RELEASE_NOTES.new.md
+            fi
+          else
+            {
+              echo "# Release Notes"
+              echo ""
+              cat "$ENTRY_FILE"
+            } > RELEASE_NOTES.new.md
+          fi
+
+          mv RELEASE_NOTES.new.md RELEASE_NOTES.md
 
           echo "no_commits=false" >> "$GITHUB_OUTPUT"
-
-      - name: Initialise RELEASE_NOTES.md if it did not exist
-        if: steps.build_entry.outputs.no_commits != 'true'
-        run: |
-          # If the file was just created (not yet tracked), prepend a heading
-          if ! git ls-files --error-unmatch RELEASE_NOTES.md 2>/dev/null; then
-            BODY=$(cat RELEASE_NOTES.md)
-            printf '# Release Notes\n%s' "$BODY" > RELEASE_NOTES.md
-          fi
 
       - name: Commit and push release notes
         if: steps.build_entry.outputs.no_commits != 'true'
