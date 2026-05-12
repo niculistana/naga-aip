@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import type NodeCache from "node-cache";
 import type { DBClient } from "../../db/db-client.js";
-import { Factory } from "fishery";
 import { disclaimerMessage } from "../../util.js";
 
 type Agency = {
@@ -29,8 +28,14 @@ export const getUnitsFromRawAgencies =
 
     const message = disclaimerMessage;
 
-    const page = Math.max(1, parseInt(req.query.page as string) || DEFAULT_PAGE);
-    const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(req.query.page_size as string) || DEFAULT_PAGE_SIZE));
+    const page = Math.max(
+      1,
+      parseInt(req.query.page as string) || DEFAULT_PAGE,
+    );
+    const pageSize = Math.min(
+      MAX_PAGE_SIZE,
+      Math.max(1, parseInt(req.query.page_size as string) || DEFAULT_PAGE_SIZE),
+    );
     const offset = (page - 1) * pageSize;
 
     const cacheKey = `all-${table}-${safeFieldsStr}`;
@@ -45,19 +50,11 @@ export const getUnitsFromRawAgencies =
       try {
         dbResult = (await db.getAllByTable(table, safeFields)) as DBAgency[];
 
-        const agencyFactory = Factory.define<Agency, DBAgency>(
-          ({ transientParams }) => {
-            return {
-              cluster_id: String(transientParams.cluster_id),
-              abbreviation: transientParams.abbreviation,
-              year: String(transientParams.year),
-            };
-          },
-        );
-
-        allResults = dbResult.map((item) =>
-          agencyFactory.build({}, { transient: item }),
-        );
+        allResults = dbResult.map((item: DBAgency) => ({
+          cluster_id: String(item.cluster_id),
+          abbreviation: item.abbreviation || "",
+          year: String(item.year),
+        }));
         cache.set(cacheKey, allResults);
       } catch (e) {
         return res.status(500).json({

@@ -72,7 +72,7 @@ describe("getProgramsFromRawPrograms", () => {
 
     const jsonCall = (res.json as ReturnType<typeof vi.fn>).mock.calls[0][0];
     expect(jsonCall.result[0]).toMatchObject({
-      program_id: "42",
+      program_id: 42,
       name: "Test Program",
       implementation_status: expect.stringMatching(/ACTIVE|PENDING|COMPLETE/),
     });
@@ -144,7 +144,10 @@ describe("getProgramsFromRawPrograms", () => {
   });
 
   it("returns empty result slice for page beyond total_pages", async () => {
-    const { req, res, next } = createMockReqRes({ page: "99", page_size: "10" });
+    const { req, res, next } = createMockReqRes({
+      page: "99",
+      page_size: "10",
+    });
     const fakeDbResult = makeDbPrograms(3);
     const mockDb: any = {
       getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),

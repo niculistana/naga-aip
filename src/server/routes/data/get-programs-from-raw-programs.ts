@@ -1,17 +1,23 @@
 import type { Request, Response, NextFunction } from "express";
 import type NodeCache from "node-cache";
 import type { DBClient } from "../../db/db-client.js";
-import { getImplementationStatus } from "./hardcode/programs.js";
-import { Factory } from "fishery";
+import {
+  getImplementationStatus,
+  type ImplementationStatus,
+} from "./hardcode/programs.js";
 import { disclaimerMessage } from "../../util.js";
+import {
+  programFactory,
+  type FactoryProgram,
+} from "../factory/program.factory.js";
 
-type Program = {
-  program_id: string;
+export type Program = {
+  program_id: number;
   name: string;
-  implementation_status: "ACTIVE" | "PENDING" | "COMPLETE";
+  implementation_status: ImplementationStatus;
 };
 
-type DBProgram = {
+export type DBProgram = {
   id: number;
   name: string;
   implementation_start: string;
@@ -59,22 +65,10 @@ export const getProgramsFromRawPrograms =
       try {
         dbResult = (await db.getAllByTable(table, safeFields)) as DBProgram[];
 
-        const programFactory = Factory.define<Program, DBProgram>(
-          ({ transientParams }) => {
-            return {
-              program_id: String(transientParams.id),
-              name: transientParams.name,
-              implementation_status: getImplementationStatus(
-                transientParams.implementation_start,
-                transientParams.implementation_end,
-              ),
-            };
-          },
-        );
+        allResults = dbResult
+          .map((item: DBProgram) => programFactory.transient(item).build())
+          .filter(Boolean) as Program[];
 
-        allResults = dbResult.map((item) =>
-          programFactory.build({}, { transient: item }),
-        );
         cache.set(cacheKey, allResults);
       } catch (e) {
         return res.status(500).json({
