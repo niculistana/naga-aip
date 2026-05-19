@@ -17,7 +17,7 @@ const createMockReqRes = (query: Record<string, string> = {}) => {
   return { req, res, next };
 };
 
-const makeDbPrograms = (count: number) =>
+const makeRawPrograms = (count: number) =>
   Array.from({ length: count }, (_, i) => ({
     id: i + 1,
     name: `Program ${i + 1}`,
@@ -33,7 +33,7 @@ describe("getProgramsFromRawPrograms", () => {
 
   it("returns 200 with default pagination when no query params provided", async () => {
     const { req, res, next } = createMockReqRes();
-    const fakeDbResult = makeDbPrograms(3);
+    const fakeDbResult = makeRawPrograms(3);
     const mockDb: any = {
       getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
     };
@@ -80,7 +80,7 @@ describe("getProgramsFromRawPrograms", () => {
 
   it("returns cached result and skips DB call on second request", async () => {
     const { req, res, next } = createMockReqRes();
-    const fakeDbResult = makeDbPrograms(2);
+    const fakeDbResult = makeRawPrograms(2);
     const mockDb: any = {
       getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
     };
@@ -98,7 +98,7 @@ describe("getProgramsFromRawPrograms", () => {
 
   it("respects page and page_size query params", async () => {
     const { req, res, next } = createMockReqRes({ page: "2", page_size: "2" });
-    const fakeDbResult = makeDbPrograms(5);
+    const fakeDbResult = makeRawPrograms(5);
     const mockDb: any = {
       getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
     };
@@ -119,7 +119,7 @@ describe("getProgramsFromRawPrograms", () => {
 
   it("clamps page_size to MAX_PAGE_SIZE (100)", async () => {
     const { req, res, next } = createMockReqRes({ page_size: "9999" });
-    const fakeDbResult = makeDbPrograms(5);
+    const fakeDbResult = makeRawPrograms(5);
     const mockDb: any = {
       getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
     };
@@ -132,7 +132,7 @@ describe("getProgramsFromRawPrograms", () => {
 
   it("clamps page to minimum of 1 for invalid page param", async () => {
     const { req, res, next } = createMockReqRes({ page: "-5" });
-    const fakeDbResult = makeDbPrograms(2);
+    const fakeDbResult = makeRawPrograms(2);
     const mockDb: any = {
       getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
     };
@@ -148,7 +148,7 @@ describe("getProgramsFromRawPrograms", () => {
       page: "99",
       page_size: "10",
     });
-    const fakeDbResult = makeDbPrograms(3);
+    const fakeDbResult = makeRawPrograms(3);
     const mockDb: any = {
       getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
     };

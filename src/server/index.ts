@@ -20,7 +20,7 @@ import { getAllFieldsByTable } from "./routes/fields/get-all-fields-by-table.js"
 import { getOneByTableAndName } from "./routes/data/get-one-by-table-and-name.js";
 import { getSectorsFromClusters } from "./routes/data/get-sectors-from-raw-clusters.js";
 import { getProgramsFromRawPrograms } from "./routes/data/get-programs-from-raw-programs.js";
-import { getUnitsFromRawAgencies } from "./routes/data/get-units-from-agencies.js";
+import { getUnitsFromRawAgencies } from "./routes/data/get-units-from-raw-agencies.js";
 import { getPageData } from "./routes/data/get-page-data.js";
 
 const app = express();
