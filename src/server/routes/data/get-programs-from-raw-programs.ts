@@ -1,28 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import type NodeCache from "node-cache";
 import type { DBClient } from "../../db/db-client.js";
-import {
-  getImplementationStatus,
-  type ImplementationStatus,
-} from "./hardcode/programs.js";
+import type { RawProgram, Program } from "../types/index.js";
 import { disclaimerMessage } from "../../util.js";
-import {
-  programFactory,
-  type FactoryProgram,
-} from "../factory/program.factory.js";
-
-export type Program = {
-  program_id: number;
-  name: string;
-  implementation_status: ImplementationStatus;
-};
-
-export type DBProgram = {
-  id: number;
-  name: string;
-  implementation_start: string;
-  implementation_end: string;
-};
+import { rawProgramToProgramFactory } from "../factory/raw/raw-program-to-program.factory.js";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 20;
@@ -60,13 +41,15 @@ export const getProgramsFromRawPrograms =
     if (cache.has(cacheKey)) {
       allResults = cache.get(cacheKey) as Program[];
     } else {
-      let dbResult: DBProgram[] = [];
+      let dbResult: RawProgram[] = [];
 
       try {
-        dbResult = (await db.getAllByTable(table, safeFields)) as DBProgram[];
+        dbResult = (await db.getAllByTable(table, safeFields)) as RawProgram[];
 
         allResults = dbResult
-          .map((item: DBProgram) => programFactory.transient(item).build())
+          .map((item: RawProgram) =>
+            rawProgramToProgramFactory.transient(item).build(),
+          )
           .filter(Boolean) as Program[];
 
         cache.set(cacheKey, allResults);
