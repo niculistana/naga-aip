@@ -21,6 +21,7 @@ import { getOneByTableAndName } from "./routes/data/get-one-by-table-and-name.js
 import { getSectorsFromClusters } from "./routes/data/get-sectors-from-raw-clusters.js";
 import { getProgramsFromRawPrograms } from "./routes/data/get-programs-from-raw-programs.js";
 import { getUnitsFromRawAgencies } from "./routes/data/get-units-from-agencies.js";
+import { getPageData } from "./routes/data/get-page-data.js";
 
 const app = express();
 const cache = new NodeCache({
@@ -51,6 +52,8 @@ app.get("/api/sectors", getSectorsFromClusters(dbClient, cache));
 app.get("/api/programs", getProgramsFromRawPrograms(dbClient, cache));
 
 app.get("/api/units", getUnitsFromRawAgencies(dbClient, cache));
+
+app.get("/api/page-data", getPageData(dbClient, cache));
 
 app.get("/api/tables", getAllTables);
 
