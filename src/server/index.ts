@@ -29,7 +29,7 @@ const cache = new NodeCache({
 });
 
 app.use("/assets", getStaticAssets("/assets"));
-app.use("/openapi.json", getStaticAssets("/openapi.json"));
+app.use("/openapi-public.json", getStaticAssets("/openapi-public.json"));
 app.use("/naga-seal.png", getStaticAssets("/naga-seal.png"));
 
 app.use(morgan("tiny"));
