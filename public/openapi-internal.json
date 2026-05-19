@@ -1,0 +1,272 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Naga API",
+    "version": "1.0.0",
+    "name": "AIP api",
+    "description": "API for querying data by table. \nEndpoints are grouped by: page_data, sectors, programs, and units"
+  },
+  "paths": {
+    "/api/data/all/{table}": {
+      "get": {
+        "summary": "Get all rows from a table",
+        "tags": "Table",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The name of the table to query."
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Comma-separated list of fields to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of rows.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (missing or invalid fields).",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/one/{table}/id/{id}": {
+      "get": {
+        "summary": "Get a single row from a table by ID",
+        "tags": "Row",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The name of the table to query."
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The ID of the row to retrieve."
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Comma-separated list of fields to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The matching row.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (missing or invalid fields).",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/one/{table}/name/{name}": {
+      "get": {
+        "summary": "Get a single row from a table by name",
+        "tags": "Row",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The name of the table to query."
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The name value of the row to retrieve."
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Comma-separated list of fields to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The matching row.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (missing or invalid fields/table).",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tables": {
+      "get": {
+        "summary": "Get all available table names",
+        "tags": "Configuration",
+        "responses": {
+          "200": {
+            "description": "A list of table names.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "example": ["clusters", "agencies", "programs", "amounts"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fields": {
+      "get": {
+        "summary": "Get all allowed field names",
+        "tags": "Configuration",
+        "responses": {
+          "200": {
+            "description": "A list of allowed field names.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "example": ["id", "name", "description", "total"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fields/{table}": {
+      "get": {
+        "summary": "Get all allowed field names for a table",
+        "parameters": [
+          {
+            "name": "table",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The table name to fetch allowed fields for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of allowed field names for the given table.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid table).",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+}
