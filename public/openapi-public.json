@@ -1,0 +1,269 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Naga API",
+    "version": "1.0.0",
+    "name": "AIP api",
+    "description": "API for querying Naga AIP data for 2026"
+  },
+  "paths": {
+    "/api/sectors": {
+      "get": {
+        "summary": "Get all sectors",
+        "tags": ["Sectors"],
+        "responses": {
+          "200": {
+            "description": "A list of sectors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "integer", "example": 1 },
+                          "name": {
+                            "type": "string",
+                            "example": "Economic Sector"
+                          },
+                          "year": { "type": "integer", "example": 2026 }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "This API may be missing data which we are actively looking to add to, please file a request on Github to prioritize it."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/programs": {
+      "get": {
+        "summary": "Get all programs (paginated)",
+        "tags": ["Programs"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 },
+            "description": "Page number (default: 1)."
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 20, "maximum": 100 },
+            "description": "Number of items per page (default: 20, max: 100)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of programs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "program_id": { "type": "string", "example": "1" },
+                          "name": {
+                            "type": "string",
+                            "example": "Purchase of Office Supplies"
+                          },
+                          "implementation_status": {
+                            "type": "string",
+                            "example": "ACTIVE"
+                          }
+                        }
+                      }
+                    },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" },
+                    "message": {
+                      "type": "string",
+                      "example": "This API may be missing data which we are actively looking to add to, please file a request on Github to prioritize it."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/units": {
+      "get": {
+        "summary": "Get all units (paginated)",
+        "tags": ["Units"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 },
+            "description": "Page number (default: 1)."
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 20, "maximum": 100 },
+            "description": "Number of items per page (default: 20, max: 100)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of units.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "cluster_id": { "type": "string", "example": "1" },
+                          "abbreviation": {
+                            "type": "string",
+                            "example": "CDRRMO"
+                          },
+                          "year": { "type": "string", "example": "2026" }
+                        }
+                      }
+                    },
+                    "pagination": { "$ref": "#/components/schemas/Pagination" },
+                    "message": {
+                      "type": "string",
+                      "example": "This API may be missing data which we are actively looking to add to, please file a request on Github to prioritize it."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/page-data": {
+      "get": {
+        "summary": "Get nested page data for sectors, programs, and units",
+        "tags": ["Page data"],
+        "responses": {
+          "200": {
+            "description": "A nested list of sectors with programs and units.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "integer", "example": 1 },
+                          "name": {
+                            "type": "string",
+                            "example": "Economic Sector"
+                          },
+                          "year": { "type": "integer", "example": 2026 },
+                          "programs": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "program_id": {
+                                  "type": "integer",
+                                  "example": 101
+                                },
+                                "program_name": {
+                                  "type": "string",
+                                  "example": "Farmers Program"
+                                },
+                                "implementation_status": {
+                                  "type": "string",
+                                  "example": "ACTIVE"
+                                },
+                                "units": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "unit_id": {
+                                        "type": "string",
+                                        "example": "10"
+                                      },
+                                      "abbreviation": {
+                                        "type": "string",
+                                        "example": "ABE"
+                                      },
+                                      "year": {
+                                        "type": "string",
+                                        "example": "2026"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "This API may be missing data which we are actively looking to add to, please file a request on Github to prioritize it."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer", "example": 1 },
+          "page_size": { "type": "integer", "example": 20 },
+          "total_items": { "type": "integer", "example": 1367 },
+          "total_pages": { "type": "integer", "example": 69 },
+          "has_next_page": { "type": "boolean", "example": true },
+          "has_prev_page": { "type": "boolean", "example": false }
+        }
+      }
+    }
+  }
+}

@@ -6,29 +6,29 @@ import { disclaimerMessage } from "../../util.js";
 export const getSectorsFromClusters =
   (db: DBClient, cache: NodeCache) =>
   async (_req: Request, res: Response, _next: NextFunction) => {
-      const table = "clusters";
-      const safeFields = ["id", "name", "year"];
-      const safeFieldsStr = safeFields.join(", ");
+    const table = "clusters";
+    const safeFields = ["id", "name", "year"];
+    const safeFieldsStr = safeFields.join(", ");
 
-      const message = disclaimerMessage;
+    const message = disclaimerMessage;
 
-      const cacheKey = `all-${table}-${safeFieldsStr}`;
-      if (cache.has(cacheKey)) {
-        const cachedResult = cache.get(cacheKey);
-        return res.status(200).json({ result: cachedResult, message });
-      }
+    const cacheKey = `all-${table}-${safeFieldsStr}`;
+    if (cache.has(cacheKey)) {
+      const cachedResult = cache.get(cacheKey);
+      return res.status(200).json({ result: cachedResult, message });
+    }
 
-      let result = {};
+    let result = {};
 
-      try {
-        result = await db.getAllByTable(table, safeFields);
-        cache.set(cacheKey, result);
-      } catch (e) {
-        console.log(e);
-        return res.status(500).json({
-          message: "Internal server error",
-        });
-      }
+    try {
+      result = await db.getAllByTable(table, safeFields);
+      cache.set(cacheKey, result);
+    } catch (e) {
+      console.log(e);
+      return res.status(500).json({
+        message: "Internal server error",
+      });
+    }
 
-      return res.status(200).json({ result, message });
+    return res.status(200).json({ result, message });
   };

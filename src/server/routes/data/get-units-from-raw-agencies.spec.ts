@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, vi, expect } from "vitest";
-import { getUnitsFromRawAgencies } from "./get-units-from-agencies.js";
+import { getUnitsFromRawAgencies } from "./get-units-from-raw-agencies.js";
 import type { Request, Response, NextFunction } from "express";
 import NodeCache from "node-cache";
 
@@ -33,7 +33,9 @@ describe("getUnitsFromRawAgencies", () => {
   it("returns 200 with default pagination when no query params provided", async () => {
     const { req, res, next } = createMockReqRes();
     const fakeDbResult = makeDbAgencies(3);
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
@@ -54,7 +56,9 @@ describe("getUnitsFromRawAgencies", () => {
   it("maps DB rows to Agency shape with stringified cluster_id and year", async () => {
     const { req, res, next } = createMockReqRes();
     const fakeDbResult = [{ cluster_id: 7, abbreviation: "DSWD", year: 2023 }];
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(fakeDbResult),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
@@ -68,18 +72,26 @@ describe("getUnitsFromRawAgencies", () => {
 
   it("caches the mapped result after the first DB call", async () => {
     const { req, res, next } = createMockReqRes();
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(2)) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(2)),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
     const cached = cache.get(CACHE_KEY) as any[];
     expect(cached).toHaveLength(2);
-    expect(cached[0]).toMatchObject({ cluster_id: "1", abbreviation: "AGY1", year: "2020" });
+    expect(cached[0]).toMatchObject({
+      cluster_id: "1",
+      abbreviation: "AGY1",
+      year: "2020",
+    });
   });
 
   it("returns cached result and skips DB call on second request", async () => {
     const { req, res, next } = createMockReqRes();
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(2)) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(2)),
+    };
 
     // First call — populates cache
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
@@ -94,7 +106,9 @@ describe("getUnitsFromRawAgencies", () => {
 
   it("respects page and page_size query params", async () => {
     const { req, res, next } = createMockReqRes({ page: "2", page_size: "2" });
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(5)) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(5)),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
@@ -112,7 +126,9 @@ describe("getUnitsFromRawAgencies", () => {
 
   it("clamps page_size to MAX_PAGE_SIZE (100)", async () => {
     const { req, res, next } = createMockReqRes({ page_size: "9999" });
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(3)) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(3)),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
@@ -122,7 +138,9 @@ describe("getUnitsFromRawAgencies", () => {
 
   it("clamps page to minimum of 1 for invalid page param", async () => {
     const { req, res, next } = createMockReqRes({ page: "-99" });
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(2)) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(2)),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
@@ -131,8 +149,13 @@ describe("getUnitsFromRawAgencies", () => {
   });
 
   it("returns empty result slice for page beyond total_pages", async () => {
-    const { req, res, next } = createMockReqRes({ page: "99", page_size: "10" });
-    const mockDb: any = { getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(3)) };
+    const { req, res, next } = createMockReqRes({
+      page: "99",
+      page_size: "10",
+    });
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockResolvedValueOnce(makeDbAgencies(3)),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
@@ -156,7 +179,9 @@ describe("getUnitsFromRawAgencies", () => {
 
   it("returns 500 on DB error", async () => {
     const { req, res, next } = createMockReqRes();
-    const mockDb: any = { getAllByTable: vi.fn().mockRejectedValueOnce(new Error("DB failure")) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockRejectedValueOnce(new Error("DB failure")),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
@@ -166,7 +191,9 @@ describe("getUnitsFromRawAgencies", () => {
 
   it("does not cache result when DB throws", async () => {
     const { req, res, next } = createMockReqRes();
-    const mockDb: any = { getAllByTable: vi.fn().mockRejectedValueOnce(new Error("DB failure")) };
+    const mockDb: any = {
+      getAllByTable: vi.fn().mockRejectedValueOnce(new Error("DB failure")),
+    };
 
     await getUnitsFromRawAgencies(mockDb, cache)(req, res, next);
 
