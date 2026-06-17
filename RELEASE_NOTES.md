@@ -1,5 +1,20 @@
 # Release Notes
 
+## 2026-06-17 — [Release: combine all apis](https://github.com/niculistana/naga-aip/pull/16)
+
+- fix: node js pin [fd7c768](https://github.com/niculistana/naga-aip/commit/fd7c768)
+- fix: vitest [e167e5e](https://github.com/niculistana/naga-aip/commit/e167e5e)
+- fix: update pnpm version in CI workflow to match package.json (11.1.3) [1854b78](https://github.com/niculistana/naga-aip/commit/1854b78)
+- chore: add tests [54fd992](https://github.com/niculistana/naga-aip/commit/54fd992)
+- feat: update page data logic [2e32d88](https://github.com/niculistana/naga-aip/commit/2e32d88)
+- docs: add api docs [4c8b60a](https://github.com/niculistana/naga-aip/commit/4c8b60a)
+- feat: implemented the page-data api for joining all apis [6dfc0b0](https://github.com/niculistana/naga-aip/commit/6dfc0b0)
+- chore: add tests [1c41b7f](https://github.com/niculistana/naga-aip/commit/1c41b7f)
+- feat: update page data logic [5c4dccc](https://github.com/niculistana/naga-aip/commit/5c4dccc)
+- docs: add api docs [487064c](https://github.com/niculistana/naga-aip/commit/487064c)
+- feat: implemented the page-data api for joining all apis [ae81846](https://github.com/niculistana/naga-aip/commit/ae81846)
+
+
 ## 2026-05-12 — [Release Add support for Sectors, Programs, Units](https://github.com/niculistana/naga-aip/pull/13)
 
 - fix: hotfix release notes, update readme [7937cf4](https://github.com/niculistana/naga-aip/commit/7937cf4)
